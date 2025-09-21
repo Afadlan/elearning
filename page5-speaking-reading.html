@@ -1,0 +1,1094 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <title>ReallyEnglish Placement Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
+      perspective: 1000px;
+      background-color: #f0f7ff;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* 3D Card container */
+    .card {
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      will-change: transform;
+      transform-style: preserve-3d;
+      border-radius: 1rem;
+      cursor: grab;
+      background: white;
+      box-shadow: 0 8px 15px rgba(59, 130, 246, 0.1);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      padding: 1.5rem;
+    }
+    .card:active {
+      cursor: grabbing;
+    }
+    .card:hover {
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+    }
+    /* Button 3D style */
+    .btn-animate {
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+      z-index: 10;
+      border-radius: 0.375rem;
+      box-shadow: 0 6px 0 #1e40af;
+      transform-style: preserve-3d;
+      transform-origin: center bottom;
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.875rem;
+      user-select: none;
+      cursor: pointer;
+    }
+    .btn-animate::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.5s ease;
+      z-index: 0;
+    }
+    .btn-animate:hover::before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .btn-animate:hover {
+      background-color: #2563eb;
+      box-shadow: 0 12px 0 #1e40af;
+      transform: translateY(-4px) rotateX(10deg);
+      color: white;
+      z-index: 11;
+    }
+    .btn-animate:active {
+      box-shadow: 0 3px 0 #1e40af;
+      transform: translateY(-1px) rotateX(5deg);
+    }
+    /* Speaking interface styling */
+    .speaking-interface {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+    .microphone-button {
+      background: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 4rem;
+      height: 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.5rem;
+      margin: 0 auto 1rem;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+    .microphone-button:hover {
+      background: #b91c1c;
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+    }
+    .microphone-button.recording {
+      background: #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+    .microphone-button.processing {
+      background: #f59e0b;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .recording-status {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+    .transcript-display {
+      background: white;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin: 1rem 0;
+      min-height: 3rem;
+      text-align: left;
+      font-size: 0.875rem;
+      color: #374151;
+    }
+    .feedback-section {
+      background: #f0f9ff;
+      border: 1px solid #0ea5e9;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin: 1rem 0;
+      text-align: left;
+    }
+    .score-display {
+      display: flex;
+      justify-content: space-around;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .score-item {
+      background: white;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      text-align: center;
+      flex: 1;
+      min-width: 120px;
+    }
+    .score-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #059669;
+    }
+    .score-label {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+    /* Reading text styling */
+    .reading-text {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin: 1rem 0;
+      text-align: left;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      user-select: text;
+    }
+    .reading-text p {
+      margin-bottom: 0.75rem;
+    }
+    .reading-text p strong {
+      font-weight: 700;
+      color: #1e40af;
+    }
+    /* Question styling */
+    .question-container {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin: 1rem 0;
+      text-align: left;
+    }
+    .question-text {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1e40af;
+    }
+    .option {
+      margin: 0.25rem 0;
+      padding: 0.5rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .option:hover {
+      background-color: #e0e7ff;
+    }
+    .option.selected {
+      background-color: #3b82f6;
+      color: white;
+    }
+    .option.correct {
+      background-color: #10b981;
+      color: white;
+    }
+    .option.incorrect {
+      background-color: #ef4444;
+      color: white;
+    }
+    /* Logo behind text container */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 90rem;
+      margin: 0 auto;
+    }
+    header .bg-logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      border-radius: 9999px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+    @media (max-width: 768px) {
+      header .bg-logo {
+        width: 120px;
+        height: 120px;
+        opacity: 0.1;
+      }
+    }
+    @media (max-width: 480px) {
+      header .bg-logo {
+        width: 80px;
+        height: 80px;
+        opacity: 0.08;
+      }
+    }
+    .font-golden {
+      font-weight: 700;
+      color: #2563eb;
+      font-size: 1.125rem;
+      user-select: none;
+    }
+    /* Scrollbar hidden for main content */
+    main::-webkit-scrollbar {
+      display: none;
+    }
+    main {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      position: relative;
+      padding-bottom: 5rem;
+    }
+    /* Inner card for conversation text */
+    .inner-card {
+      border: 1px solid #334155;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: #1e293b;
+      line-height: 1.3;
+      margin-bottom: 1.5rem;
+      background: white;
+      user-select: text;
+    }
+    .inner-card p {
+      margin-bottom: 0.5rem;
+    }
+    .inner-card p strong {
+      font-weight: 700;
+    }
+    /* Progress bar styling */
+    progress {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 0.25rem;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+    progress::-webkit-progress-bar {
+      background-color: #cbd5e1;
+    }
+    progress::-webkit-progress-value {
+      background-color: #2563eb;
+      transition: width 1s linear;
+    }
+    progress::-moz-progress-bar {
+      background-color: #2563eb;
+      transition: width 1s linear;
+    }
+    /* Fixed next button bottom right */
+    .next-button-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 20;
+    }
+    @media (max-width: 640px) {
+      .next-button-container {
+        position: static;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 1.5rem;
+      }
+      main {
+        padding-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img
+      alt="ReallyEnglish logo with letters R and E in blue square"
+      class="relative z-10"
+      height="40"
+      src="https://storage.googleapis.com/a1aa/image/d09cce8d-911a-405c-e6b3-63ef1c89ae3a.jpg"
+      width="40"
+      decoding="async"
+      loading="lazy"
+    />
+    <span class="font-golden select-none">ReallyEnglish</span>
+    <img
+      alt="Large blue gradient circle shape behind header text"
+      class="bg-logo"
+      height="200"
+      src="https://storage.googleapis.com/a1aa/image/7a536139-0f90-464f-5576-28fa91748278.jpg"
+      width="200"
+      decoding="async"
+      loading="lazy"
+    />
+  </header>
+  <main class="max-w-4xl mx-auto px-6 py-8 flex-grow">
+    <section class="mb-6">
+      <div
+        class="bg-[#2563eb] text-white text-[10px] text-center py-1 rounded-md select-none font-semibold"
+        aria-label="Placement test title"
+      >
+        Placement - Placement Test Adults
+      </div>
+      <progress
+        id="progressBar"
+        max="5400"
+        value="3000"
+        aria-label="Placement test progress bar"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="5400"
+        aria-valuenow="3000"
+      ></progress>
+      <p
+        class="text-[10px] text-center text-black/80 select-none leading-tight"
+        aria-live="polite"
+        aria-atomic="true"
+        id="countdownText"
+      >
+        Durasi 90 menit<br />
+        <span id="timeDisplay" style="">50Menit 0Detik</span>
+      </p>
+    </section>
+    <section
+      class="card rounded-xl"
+      aria-label="Speaking Assessment - IELTS Reading Aloud section"
+      id="mainCard"
+    >
+      <div class="inner-card" aria-live="polite" aria-atomic="true">
+        <p class="font-bold text-center mb-1">
+          Speaking Assessment - IELTS Reading Aloud (Intermediate)
+        </p>
+        <p class="text-center mb-3">
+          Read the passage aloud clearly. Your pronunciation, fluency, and clarity will be analyzed.
+        </p>
+        <p class="font-bold mb-3">Speaking Tasks (Questions 5-10)</p>
+
+        <div class="speaking-interface">
+          <p class="text-sm font-semibold mb-2">🎤 Speaking Task 5</p>
+          <p class="text-sm mb-4"><strong>Instructions:</strong> Please read the following passage aloud. Focus on clear pronunciation and natural intonation.</p>
+
+          <div class="reading-text">
+            <p><strong>Climate Change and Global Food Security</strong></p>
+            <p>Climate change poses unprecedented threats to global food security, affecting agricultural productivity across diverse geographical regions. Rising temperatures, altered precipitation patterns, and increased frequency of extreme weather events have disrupted traditional farming practices that communities have relied upon for generations. Scientists estimate that crop yields could decline by 10-25% by 2050 if current climate trends continue unabated.</p>
+            <p>Agricultural adaptation strategies have emerged as critical responses to these challenges. Drought-resistant crop varieties, precision irrigation systems, and sustainable farming techniques represent innovative solutions that farmers worldwide are implementing. The development of climate-smart agriculture involves integrating traditional knowledge with modern technology to enhance resilience against environmental uncertainties.</p>
+          </div>
+
+          <button id="micButton5" class="microphone-button" onclick="toggleRecording(5)">
+            <i class="fas fa-microphone"></i>
+          </button>
+
+          <div id="recordingStatus5" class="recording-status">
+            Click the microphone to start reading (Maximum 3 minutes)
+          </div>
+
+          <div id="transcript5" class="transcript-display">
+            Your speech will appear here as you read...
+          </div>
+
+          <div id="feedback5" class="feedback-section" style="display: none;">
+            <h4 class="font-semibold mb-2">📊 Analysis Results</h4>
+            <div class="score-display">
+              <div class="score-item">
+                <div id="pronunciationScore5" class="score-value">--</div>
+                <div class="score-label">Pronunciation</div>
+              </div>
+              <div class="score-item">
+                <div id="fluencyScore5" class="score-value">--</div>
+                <div class="score-label">Fluency</div>
+              </div>
+              <div class="score-item">
+                <div id="clarityScore5" class="score-value">--</div>
+                <div class="score-label">Clarity</div>
+              </div>
+              <div class="score-item">
+                <div id="paceScore5" class="score-value">--</div>
+                <div class="score-label">Pace</div>
+              </div>
+            </div>
+            <div id="detailedFeedback5" class="mt-3 text-sm">
+              <!-- Detailed feedback will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Speaking Task 6"
+      id="task6Card"
+    >
+      <div class="inner-card">
+        <div class="speaking-interface">
+          <p class="text-sm font-semibold mb-2">🎤 Speaking Task 6</p>
+          <p class="text-sm mb-4"><strong>Instructions:</strong> Please read the following passage aloud. Pay attention to complex vocabulary and sentence structures.</p>
+
+          <div class="reading-text">
+            <p><strong>The Evolution of Artificial Intelligence in Healthcare</strong></p>
+            <p>Artificial intelligence has revolutionized healthcare delivery through sophisticated diagnostic tools, predictive analytics, and personalized treatment protocols. Machine learning algorithms can analyze vast datasets of medical images, identifying patterns that might escape human detection. These technological advances have significantly improved diagnostic accuracy rates, particularly in radiology, pathology, and ophthalmology specializations.</p>
+            <p>The implementation of AI-powered systems has streamlined clinical workflows, reducing administrative burdens on healthcare professionals while enhancing patient care quality. Electronic health records integrated with intelligent decision-support systems provide real-time recommendations for treatment options, drug interactions, and potential complications.</p>
+          </div>
+
+          <button id="micButton6" class="microphone-button" onclick="toggleRecording(6)">
+            <i class="fas fa-microphone"></i>
+          </button>
+
+          <div id="recordingStatus6" class="recording-status">
+            Click the microphone to start reading (Maximum 3 minutes)
+          </div>
+
+          <div id="transcript6" class="transcript-display">
+            Your speech will appear here as you read...
+          </div>
+
+          <div id="feedback6" class="feedback-section" style="display: none;">
+            <h4 class="font-semibold mb-2">📊 Analysis Results</h4>
+            <div class="score-display">
+              <div class="score-item">
+                <div id="pronunciationScore6" class="score-value">--</div>
+                <div class="score-label">Pronunciation</div>
+              </div>
+              <div class="score-item">
+                <div id="fluencyScore6" class="score-value">--</div>
+                <div class="score-label">Fluency</div>
+              </div>
+              <div class="score-item">
+                <div id="clarityScore6" class="score-value">--</div>
+                <div class="score-label">Clarity</div>
+              </div>
+              <div class="score-item">
+                <div id="paceScore6" class="score-value">--</div>
+                <div class="score-label">Pace</div>
+              </div>
+            </div>
+            <div id="detailedFeedback6" class="mt-3 text-sm">
+              <!-- Detailed feedback will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Speaking Task 7"
+      id="task7Card"
+    >
+      <div class="inner-card">
+        <div class="speaking-interface">
+          <p class="text-sm font-semibold mb-2">🎤 Speaking Task 7</p>
+          <p class="text-sm mb-4"><strong>Instructions:</strong> Please read the following passage aloud. Focus on scientific terminology and pronunciation.</p>
+
+          <div class="reading-text">
+            <p><strong>Marine Biodiversity and Ocean Conservation</strong></p>
+            <p>Marine ecosystems harbor extraordinary biodiversity, supporting countless species that have evolved over millions of years. Coral reefs, kelp forests, and deep-sea environments provide essential habitats for marine life while contributing significantly to global oxygen production and carbon sequestration. However, anthropogenic activities including overfishing, pollution, and climate change threaten these delicate ecosystems.</p>
+            <p>Conservation efforts require comprehensive approaches that integrate scientific research, policy implementation, and community engagement. Marine protected areas, sustainable fishing practices, and pollution reduction initiatives represent crucial strategies for preserving ocean health. International collaboration through organizations like the United Nations Convention on the Law of the Sea facilitates coordinated conservation efforts across national boundaries.</p>
+          </div>
+
+          <button id="micButton7" class="microphone-button" onclick="toggleRecording(7)">
+            <i class="fas fa-microphone"></i>
+          </button>
+
+          <div id="recordingStatus7" class="recording-status">
+            Click the microphone to start reading (Maximum 3 minutes)
+          </div>
+
+          <div id="transcript7" class="transcript-display">
+            Your speech will appear here as you read...
+          </div>
+
+          <div id="feedback7" class="feedback-section" style="display: none;">
+            <h4 class="font-semibold mb-2">📊 Analysis Results</h4>
+            <div class="score-display">
+              <div class="score-item">
+                <div id="pronunciationScore7" class="score-value">--</div>
+                <div class="score-label">Pronunciation</div>
+              </div>
+              <div class="score-item">
+                <div id="fluencyScore7" class="score-value">--</div>
+                <div class="score-label">Fluency</div>
+              </div>
+              <div class="score-item">
+                <div id="clarityScore7" class="score-value">--</div>
+                <div class="score-label">Clarity</div>
+              </div>
+              <div class="score-item">
+                <div id="paceScore7" class="score-value">--</div>
+                <div class="score-label">Pace</div>
+              </div>
+            </div>
+            <div id="detailedFeedback7" class="mt-3 text-sm">
+              <!-- Detailed feedback will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Speaking Task 8"
+      id="task8Card"
+    >
+      <div class="inner-card">
+        <div class="speaking-interface">
+          <p class="text-sm font-semibold mb-2">🎤 Speaking Task 8</p>
+          <p class="text-sm mb-4"><strong>Instructions:</strong> Please read the following passage aloud. Focus on economic terminology and clear articulation.</p>
+
+          <div class="reading-text">
+            <p><strong>Global Economic Interdependence and Trade</strong></p>
+            <p>Contemporary global economics demonstrates unprecedented levels of interdependence among nations, facilitated by advanced communication technologies and streamlined transportation networks. International trade agreements, multinational corporations, and cross-border investment flows have created complex economic relationships that transcend traditional geographical boundaries.</p>
+            <p>Supply chain management has evolved into sophisticated systems that optimize efficiency while minimizing costs across multiple countries. However, this interconnectedness also creates vulnerabilities, as demonstrated by recent global disruptions that highlighted the importance of supply chain resilience and diversification strategies for maintaining economic stability.</p>
+          </div>
+
+          <button id="micButton8" class="microphone-button" onclick="toggleRecording(8)">
+            <i class="fas fa-microphone"></i>
+          </button>
+
+          <div id="recordingStatus8" class="recording-status">
+            Click the microphone to start reading (Maximum 3 minutes)
+          </div>
+
+          <div id="transcript8" class="transcript-display">
+            Your speech will appear here as you read...
+          </div>
+
+          <div id="feedback8" class="feedback-section" style="display: none;">
+            <h4 class="font-semibold mb-2">📊 Analysis Results</h4>
+            <div class="score-display">
+              <div class="score-item">
+                <div id="pronunciationScore8" class="score-value">--</div>
+                <div class="score-label">Pronunciation</div>
+              </div>
+              <div class="score-item">
+                <div id="fluencyScore8" class="score-value">--</div>
+                <div class="score-label">Fluency</div>
+              </div>
+              <div class="score-item">
+                <div id="clarityScore8" class="score-value">--</div>
+                <div class="score-label">Clarity</div>
+              </div>
+              <div class="score-item">
+                <div id="paceScore8" class="score-value">--</div>
+                <div class="score-label">Pace</div>
+              </div>
+            </div>
+            <div id="detailedFeedback8" class="mt-3 text-sm">
+              <!-- Detailed feedback will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Speaking Task 9"
+      id="task9Card"
+    >
+      <div class="inner-card">
+        <div class="speaking-interface">
+          <p class="text-sm font-semibold mb-2">🎤 Speaking Task 9</p>
+          <p class="text-sm mb-4"><strong>Instructions:</strong> Please read the following passage aloud. Pay attention to social science vocabulary.</p>
+
+          <div class="reading-text">
+            <p><strong>Cultural Diversity in Modern Society</strong></p>
+            <p>Cultural diversity enriches societies by fostering creativity, innovation, and mutual understanding among different communities. Multicultural environments provide opportunities for cross-cultural learning, enabling individuals to develop broader perspectives and enhanced problem-solving capabilities. Educational institutions, workplaces, and communities benefit significantly from diverse representation and inclusive practices.</p>
+            <p>However, managing cultural diversity requires thoughtful approaches that address potential challenges while maximizing benefits. Effective communication strategies, cultural competency training, and inclusive policies help create environments where all individuals can contribute meaningfully regardless of their cultural background or heritage.</p>
+          </div>
+
+          <button id="micButton9" class="microphone-button" onclick="toggleRecording(9)">
+            <i class="fas fa-microphone"></i>
+          </button>
+
+          <div id="recordingStatus9" class="recording-status">
+            Click the microphone to start reading (Maximum 3 minutes)
+          </div>
+
+          <div id="transcript9" class="transcript-display">
+            Your speech will appear here as you read...
+          </div>
+
+          <div id="feedback9" class="feedback-section" style="display: none;">
+            <h4 class="font-semibold mb-2">📊 Analysis Results</h4>
+            <div class="score-display">
+              <div class="score-item">
+                <div id="pronunciationScore9" class="score-value">--</div>
+                <div class="score-label">Pronunciation</div>
+              </div>
+              <div class="score-item">
+                <div id="fluencyScore9" class="score-value">--</div>
+                <div class="score-label">Fluency</div>
+              </div>
+              <div class="score-item">
+                <div id="clarityScore9" class="score-value">--</div>
+                <div class="score-label">Clarity</div>
+              </div>
+              <div class="score-item">
+                <div id="paceScore9" class="score-value">--</div>
+                <div class="score-label">Pace</div>
+              </div>
+            </div>
+            <div id="detailedFeedback9" class="mt-3 text-sm">
+              <!-- Detailed feedback will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Speaking Task 10"
+      id="task10Card"
+    >
+      <div class="inner-card">
+        <div class="speaking-interface">
+          <p class="text-sm font-semibold mb-2">🎤 Speaking Task 10</p>
+          <p class="text-sm mb-4"><strong>Instructions:</strong> Please read the following passage aloud. Focus on natural rhythm and advanced vocabulary.</p>
+
+          <div class="reading-text">
+            <p><strong>Psychological Well-being and Mental Health</strong></p>
+            <p>Mental health awareness has gained significant prominence in contemporary society as researchers and healthcare professionals recognize the profound impact of psychological well-being on overall quality of life. Stress management techniques, mindfulness practices, and therapeutic interventions have proven effective in addressing various mental health challenges that individuals face in modern life.</p>
+            <p>The stigma surrounding mental health issues has gradually diminished through education campaigns and advocacy efforts. Workplace wellness programs, community support networks, and accessible mental health services contribute to creating environments that prioritize psychological well-being and encourage individuals to seek help when needed.</p>
+          </div>
+
+          <button id="micButton10" class="microphone-button" onclick="toggleRecording(10)">
+            <i class="fas fa-microphone"></i>
+          </button>
+
+          <div id="recordingStatus10" class="recording-status">
+            Click the microphone to start reading (Maximum 3 minutes)
+          </div>
+
+          <div id="transcript10" class="transcript-display">
+            Your speech will appear here as you read...
+          </div>
+
+          <div id="feedback10" class="feedback-section" style="display: none;">
+            <h4 class="font-semibold mb-2">📊 Analysis Results</h4>
+            <div class="score-display">
+              <div class="score-item">
+                <div id="pronunciationScore10" class="score-value">--</div>
+                <div class="score-label">Pronunciation</div>
+              </div>
+              <div class="score-item">
+                <div id="fluencyScore10" class="score-value">--</div>
+                <div class="score-label">Fluency</div>
+              </div>
+              <div class="score-item">
+                <div id="clarityScore10" class="score-value">--</div>
+                <div class="score-label">Clarity</div>
+              </div>
+              <div class="score-item">
+                <div id="paceScore10" class="score-value">--</div>
+                <div class="score-label">Pace</div>
+              </div>
+            </div>
+            <div id="detailedFeedback10" class="mt-3 text-sm">
+              <!-- Detailed feedback will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="next-button-container">
+    <a href="page6-speaking-reading.html" class="btn-animate inline-block text-center" aria-label="Next speaking tasks">
+      Next
+    </a>
+  </div>
+  <script>
+    let answers = {};
+    const correctAnswers = {
+      6: 'B', // 10-25%
+      7: 'B', // Integrating traditional knowledge with modern technology
+      8: 'B', // Rising temperatures, altered precipitation, and extreme weather
+      9: 'B', // Radiology, pathology, and ophthalmology
+      10: 'B' // Data privacy, algorithmic bias, and need for human oversight
+    };
+
+    function selectAnswer(questionId, answer) {
+      answers[questionId] = answer;
+
+      // Remove previous selections for this question
+      const questionOptions = document.querySelectorAll(`input[name="q${questionId}"]`);
+      questionOptions.forEach(option => {
+        option.parentElement.classList.remove('selected', 'correct', 'incorrect');
+      });
+
+      // Highlight selected option
+      const selectedOption = document.querySelector(`input[name="q${questionId}"][value="${answer}"]`);
+      if (selectedOption) {
+        selectedOption.parentElement.classList.add('selected');
+      }
+    }
+
+    // Speech recognition and recording functionality
+    let mediaRecorder = {};
+    let audioChunks = {};
+    let isRecording = {};
+    let recognition = {};
+    let recordingTimeout = {};
+
+    // Initialize speech recognition if available
+    function initializeSpeechRecognition(taskId) {
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition[taskId] = new SpeechRecognition();
+        recognition[taskId].continuous = true;
+        recognition[taskId].interimResults = true;
+        recognition[taskId].lang = 'en-US';
+
+        recognition[taskId].onresult = function(event) {
+          let transcript = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          document.getElementById(`transcript${taskId}`).textContent = transcript;
+        };
+
+        recognition[taskId].onerror = function(event) {
+          console.error('Speech recognition error:', event.error);
+          document.getElementById(`recordingStatus${taskId}`).textContent = 'Speech recognition error. Please try again.';
+        };
+
+        recognition[taskId].onend = function() {
+          if (isRecording[taskId]) {
+            // Restart recognition if still recording
+            recognition[taskId].start();
+          }
+        };
+      }
+    }
+
+    // Initialize speech recognition for all tasks
+    for (let i = 5; i <= 10; i++) {
+      initializeSpeechRecognition(i);
+    }
+
+    async function toggleRecording(taskId) {
+      const micButton = document.getElementById(`micButton${taskId}`);
+      const recordingStatus = document.getElementById(`recordingStatus${taskId}`);
+      const transcript = document.getElementById(`transcript${taskId}`);
+      const feedback = document.getElementById(`feedback${taskId}`);
+
+      if (!isRecording[taskId]) {
+        // Start recording
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+          mediaRecorder[taskId] = new MediaRecorder(stream);
+          audioChunks[taskId] = [];
+          isRecording[taskId] = true;
+
+          micButton.classList.add('recording');
+          micButton.innerHTML = '<i class="fas fa-stop"></i>';
+          recordingStatus.textContent = 'Recording... Click to stop (Maximum 3 minutes)';
+          transcript.textContent = 'Listening...';
+          feedback.style.display = 'none';
+
+          // Start speech recognition
+          if (recognition[taskId]) {
+            recognition[taskId].start();
+          }
+
+          mediaRecorder[taskId].ondataavailable = function(event) {
+            audioChunks[taskId].push(event.data);
+          };
+
+          mediaRecorder[taskId].onstop = function() {
+            const audioBlob = new Blob(audioChunks[taskId], { type: 'audio/wav' });
+            // Here you would typically send the audio to a server for analysis
+            processRecording(taskId, audioBlob);
+          };
+
+          mediaRecorder[taskId].start();
+
+          // Auto-stop after 3 minutes
+          recordingTimeout[taskId] = setTimeout(() => {
+            if (isRecording[taskId]) {
+              toggleRecording(taskId);
+            }
+          }, 180000);
+
+        } catch (error) {
+          console.error('Error accessing microphone:', error);
+          recordingStatus.textContent = 'Error accessing microphone. Please check permissions.';
+        }
+      } else {
+        // Stop recording
+        isRecording[taskId] = false;
+
+        if (mediaRecorder[taskId] && mediaRecorder[taskId].state !== 'inactive') {
+          mediaRecorder[taskId].stop();
+        }
+
+        if (recognition[taskId]) {
+          recognition[taskId].stop();
+        }
+
+        if (recordingTimeout[taskId]) {
+          clearTimeout(recordingTimeout[taskId]);
+        }
+
+        micButton.classList.remove('recording');
+        micButton.classList.add('processing');
+        micButton.innerHTML = '<i class="fas fa-cog"></i>';
+        recordingStatus.textContent = 'Processing your speech...';
+
+        // Stop all tracks
+        const stream = mediaRecorder[taskId].stream;
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
+      }
+    }
+
+    function processRecording(taskId, audioBlob) {
+      // Simulate processing time
+      setTimeout(() => {
+        const micButton = document.getElementById(`micButton${taskId}`);
+        const recordingStatus = document.getElementById(`recordingStatus${taskId}`);
+        const feedback = document.getElementById(`feedback${taskId}`);
+
+        micButton.classList.remove('processing');
+        micButton.innerHTML = '<i class="fas fa-microphone"></i>';
+        recordingStatus.textContent = 'Recording complete. Click to record again.';
+
+        // Simulate analysis results for reading aloud
+        const scores = generateReadingScores();
+        displayReadingFeedback(taskId, scores);
+
+        feedback.style.display = 'block';
+      }, 2000);
+    }
+
+    function generateReadingScores() {
+      // Generate realistic mock scores for IELTS-level reading
+      return {
+        pronunciation: Math.floor(Math.random() * 2) + 7, // 7-8 (IELTS level)
+        fluency: Math.floor(Math.random() * 2) + 6, // 6-7
+        clarity: Math.floor(Math.random() * 2) + 7, // 7-8
+        comprehension: Math.floor(Math.random() * 2) + 6 // 6-7
+      };
+    }
+
+    function displayReadingFeedback(taskId, scores) {
+      document.getElementById(`pronunciationScore${taskId}`).textContent = scores.pronunciation + '/9';
+      document.getElementById(`fluencyScore${taskId}`).textContent = scores.fluency + '/9';
+      document.getElementById(`clarityScore${taskId}`).textContent = scores.clarity + '/9';
+      document.getElementById(`comprehensionScore${taskId}`).textContent = scores.comprehension + '/9';
+
+      const feedbackText = generateReadingDetailedFeedback(scores);
+      document.getElementById(`detailedFeedback${taskId}`).innerHTML = feedbackText;
+    }
+
+    function generateReadingDetailedFeedback(scores) {
+      let feedback = '<strong>IELTS Reading Aloud Analysis:</strong><br>';
+
+      if (scores.pronunciation >= 8) {
+        feedback += '✅ <strong>Pronunciation:</strong> Excellent pronunciation with clear articulation of complex vocabulary.<br>';
+      } else if (scores.pronunciation >= 7) {
+        feedback += '✅ <strong>Pronunciation:</strong> Good pronunciation with minor issues on challenging words.<br>';
+      } else {
+        feedback += '⚠️ <strong>Pronunciation:</strong> Some pronunciation errors. Focus on word stress and vowel sounds.<br>';
+      }
+
+      if (scores.fluency >= 7) {
+        feedback += '✅ <strong>Fluency:</strong> Smooth reading with natural flow and appropriate pacing.<br>';
+      } else {
+        feedback += '⚠️ <strong>Fluency:</strong> Some hesitation noticed. Practice reading complex texts aloud.<br>';
+      }
+
+      if (scores.clarity >= 8) {
+        feedback += '✅ <strong>Clarity:</strong> Very clear speech with excellent diction.<br>';
+      } else if (scores.clarity >= 7) {
+        feedback += '✅ <strong>Clarity:</strong> Generally clear with good enunciation.<br>';
+      } else {
+        feedback += '⚠️ <strong>Clarity:</strong> Speech could be clearer. Focus on articulation.<br>';
+      }
+
+      if (scores.comprehension >= 7) {
+        feedback += '✅ <strong>Comprehension:</strong> Good understanding demonstrated through natural reading rhythm.';
+      } else {
+        feedback += '⚠️ <strong>Comprehension:</strong> Work on understanding complex texts for better reading flow.';
+      }
+
+      return feedback;
+    }
+
+    // 3D card tilt effect
+    const cards = document.querySelectorAll(".card");
+    cards.forEach((card) => {
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * 10;
+        const rotateY = ((x - centerX) / centerX) * 10;
+        card.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+      });
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+      });
+    });
+
+    // Countdown timer for 90 minutes (5400 seconds) with localStorage persistence
+    const totalSeconds = 90 * 60;
+    const progressBar = document.getElementById("progressBar");
+    const timeDisplay = document.getElementById("timeDisplay");
+
+    // Initialize timer - check if timer already exists in localStorage
+    let remainingSeconds;
+    const savedTime = localStorage.getItem('testRemainingTime');
+    const savedTimestamp = localStorage.getItem('testTimestamp');
+
+    if (savedTime && savedTimestamp) {
+      // Calculate elapsed time since last save
+      const currentTime = Date.now();
+      const elapsedSeconds = Math.floor((currentTime - parseInt(savedTimestamp)) / 1000);
+      remainingSeconds = Math.max(0, parseInt(savedTime) - elapsedSeconds);
+    } else {
+      // First time - start with full time
+      remainingSeconds = totalSeconds;
+      localStorage.setItem('testRemainingTime', remainingSeconds.toString());
+      localStorage.setItem('testTimestamp', Date.now().toString());
+    }
+
+    function updateCountdown() {
+      if (remainingSeconds < 0) {
+        remainingSeconds = 0;
+        clearInterval(timerInterval);
+        localStorage.removeItem('testRemainingTime');
+        localStorage.removeItem('testTimestamp');
+      }
+
+      // Update progress bar value and aria-valuenow
+      progressBar.value = remainingSeconds;
+      progressBar.setAttribute("aria-valuenow", remainingSeconds);
+
+      // Update countdown text specifically for #timeDisplay
+      const hours = Math.floor(remainingSeconds / 3600);
+      const minutes = Math.floor((remainingSeconds % 3600) / 60);
+      const seconds = remainingSeconds % 60;
+      const displayText = `${hours}Jam ${minutes}Menit ${seconds}Detik`;
+      timeDisplay.textContent = displayText;
+
+      // Save current state to localStorage
+      localStorage.setItem('testRemainingTime', remainingSeconds.toString());
+      localStorage.setItem('testTimestamp', Date.now().toString());
+
+      remainingSeconds--;
+    }
+
+    updateCountdown();
+    const timerInterval = setInterval(updateCountdown, 1000);
+
+    // Tab visibility detection and modal notification
+    let isTabSwitchModalShown = false;
+
+    // Create modal HTML
+    const modalHTML = `
+      <div id="tabSwitchModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 2rem; border-radius: 1rem; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);">
+          <div style="color: #dc2626; font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+          <h2 style="color: #1e293b; margin-bottom: 1rem; font-size: 1.25rem; font-weight: 700;">Peringatan!</h2>
+          <p style="color: #64748b; margin-bottom: 1.5rem; line-height: 1.5;">Anda terdeteksi membuka tab lain. Harap fokus pada halaman tes untuk melanjutkan.</p>
+          <button id="closeTabModal" style="background-color: #3b82f6; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: background-color 0.3s;">
+            Kembali ke Tes
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Add modal to page
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    const modal = document.getElementById('tabSwitchModal');
+    const closeBtn = document.getElementById('closeTabModal');
+
+    // Close modal function
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+      isTabSwitchModalShown = false;
+    });
+
+    // Detect tab visibility change
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && !isTabSwitchModalShown) {
+        // User switched to another tab
+        setTimeout(() => {
+          if (document.hidden && !isTabSwitchModalShown) {
+            modal.style.display = 'flex';
+            isTabSwitchModalShown = true;
+          }
+        }, 1000); // Show modal after 1 second of being hidden
+      }
+    });
+
+    // Also detect window blur (when user clicks outside browser)
+    window.addEventListener('blur', () => {
+      if (!isTabSwitchModalShown) {
+        setTimeout(() => {
+          if (!document.hasFocus() && !isTabSwitchModalShown) {
+            modal.style.display = 'flex';
+            isTabSwitchModalShown = true;
+          }
+        }, 1000);
+      }
+    });
+  </script>
+</body>
+</html>

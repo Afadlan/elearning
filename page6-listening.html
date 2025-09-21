@@ -1,0 +1,619 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <title>ReallyEnglish Placement Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
+      perspective: 1000px;
+      background-color: #f0f7ff;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* 3D Card container */
+    .card {
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      will-change: transform;
+      transform-style: preserve-3d;
+      border-radius: 1rem;
+      cursor: grab;
+      background: white;
+      box-shadow: 0 8px 15px rgba(59, 130, 246, 0.1);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      padding: 1.5rem;
+    }
+    .card:active {
+      cursor: grabbing;
+    }
+    .card:hover {
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+    }
+    /* Button 3D style */
+    .btn-animate {
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+      z-index: 10;
+      border-radius: 0.375rem;
+      box-shadow: 0 6px 0 #1e40af;
+      transform-style: preserve-3d;
+      transform-origin: center bottom;
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.875rem;
+      user-select: none;
+      cursor: pointer;
+    }
+    .btn-animate::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.5s ease;
+      z-index: 0;
+    }
+    .btn-animate:hover::before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .btn-animate:hover {
+      background-color: #2563eb; /* darker blue */
+      box-shadow: 0 12px 0 #1e40af;
+      transform: translateY(-4px) rotateX(10deg);
+      color: white;
+      z-index: 11;
+    }
+    .btn-animate:active {
+      box-shadow: 0 3px 0 #1e40af;
+      transform: translateY(-1px) rotateX(5deg);
+    }
+    /* Audio player styling */
+    .audio-player {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+    .audio-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .play-button {
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 3rem;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.2rem;
+    }
+    .play-button:hover {
+      background: #059669;
+      transform: scale(1.05);
+    }
+    .play-button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .play-count {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+    /* Logo behind text container */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 90rem;
+      margin: 0 auto;
+    }
+    header .bg-logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      border-radius: 9999px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+    @media (max-width: 768px) {
+      header .bg-logo {
+        width: 120px;
+        height: 120px;
+        opacity: 0.1;
+      }
+    }
+    @media (max-width: 480px) {
+      header .bg-logo {
+        width: 80px;
+        height: 80px;
+        opacity: 0.08;
+      }
+    }
+    .font-golden {
+      font-weight: 700;
+      color: #2563eb;
+      font-size: 1.125rem;
+      user-select: none;
+    }
+    /* Scrollbar hidden for main content */
+    main::-webkit-scrollbar {
+      display: none;
+    }
+    main {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      position: relative;
+      padding-bottom: 5rem; /* space for fixed button */
+    }
+    /* Form radio spacing */
+    form label {
+      display: block;
+      margin-left: 1.25rem;
+      margin-bottom: 0.25rem;
+      font-size: 0.75rem;
+      color: #1e293b;
+      cursor: pointer;
+    }
+    form p {
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+      color: #334155;
+    }
+    /* Inner card for conversation text */
+    .inner-card {
+      border: 1px solid #334155;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: #1e293b;
+      line-height: 1.3;
+      margin-bottom: 1.5rem;
+      background: white;
+      user-select: text;
+    }
+    .inner-card p {
+      margin-bottom: 0.5rem;
+    }
+    .inner-card p strong {
+      font-weight: 700;
+    }
+    .inner-card p u {
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+    /* Progress bar styling */
+    progress {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 0.25rem;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+    progress::-webkit-progress-bar {
+      background-color: #cbd5e1;
+    }
+    progress::-webkit-progress-value {
+      background-color: #2563eb;
+      transition: width 1s linear;
+    }
+    progress::-moz-progress-bar {
+      background-color: #2563eb;
+      transition: width 1s linear;
+    }
+    /* Fixed next button bottom right */
+    .next-button-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 20;
+    }
+    @media (max-width: 640px) {
+      .next-button-container {
+        position: static;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 1.5rem;
+      }
+      main {
+        padding-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img
+      alt="ReallyEnglish logo with letters R and E in blue square"
+      class="relative z-10"
+      height="40"
+      src="https://storage.googleapis.com/a1aa/image/d09cce8d-911a-405c-e6b3-63ef1c89ae3a.jpg"
+      width="40"
+      decoding="async"
+      loading="lazy"
+    />
+    <span class="font-golden select-none">ReallyEnglish</span>
+    <img
+      alt="Large blue gradient circle shape behind header text"
+      class="bg-logo"
+      height="200"
+      src="https://storage.googleapis.com/a1aa/image/7a536139-0f90-464f-5576-28fa91748278.jpg"
+      width="200"
+      decoding="async"
+      loading="lazy"
+    />
+  </header>
+  <main class="max-w-4xl mx-auto px-6 py-8 flex-grow">
+    <section class="mb-6">
+      <div
+        class="bg-[#2563eb] text-white text-[10px] text-center py-1 rounded-md select-none font-semibold"
+        aria-label="Placement test title"
+      >
+        Placement - Placement Test Adults
+      </div>
+      <progress
+        id="progressBar"
+        max="5400"
+        value="4200"
+        aria-label="Placement test progress bar"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="5400"
+        aria-valuenow="4200"
+      ></progress>
+      <p
+        class="text-[10px] text-center text-black/80 select-none leading-tight"
+        aria-live="polite"
+        aria-atomic="true"
+        id="countdownText"
+      >
+        Durasi 90 menit<br />
+        <span id="timeDisplay" style="">1Jam 10Menit 0Detik</span>
+      </p>
+    </section>
+    <section
+      class="card rounded-xl"
+      aria-label="Listening Comprehension - Navigation in Shopping District section"
+      id="mainCard"
+    >
+      <div class="inner-card" aria-live="polite" aria-atomic="true">
+        <p class="font-bold text-center mb-1">
+          Listening Comprehension - Navigation in Shopping District (B1)
+        </p>
+        <p class="text-center mb-3">
+          Listen to the conversation and answer questions 11-15. You can play the audio up to 3 times.
+        </p>
+        <p class="font-bold mb-3">Conversation: Finding Shops in the Shopping District</p>
+        
+        <div class="audio-player">
+          <p class="text-sm font-semibold mb-2">🎧 Audio: Tourist looking for specific shops in the shopping district</p>
+          <div class="audio-controls">
+            <button id="playButton" class="play-button" onclick="playAudio()">
+              <i class="fas fa-play"></i>
+            </button>
+            <div class="text-sm">
+              <div>Duration: 3:20</div>
+              <div id="playCount" class="play-count">Plays remaining: 3/3</div>
+            </div>
+          </div>
+          <audio id="audioPlayer" preload="metadata">
+            <source src="audio/directions-shopping-district.mp3" type="audio/mpeg">
+            <source src="audio/directions-shopping-district.ogg" type="audio/ogg">
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+        
+        <p class="text-xs text-gray-600 mt-2">
+          <strong>Transcript Preview:</strong> A tourist asks a local shopkeeper for directions to various shops including a bookstore, pharmacy, and restaurant. The conversation includes detailed directions with street names and landmarks.
+        </p>
+      </div>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 11"
+      role="region"
+      aria-labelledby="q11-label"
+    >
+      <p id="q11-label" class="mb-2 text-[10px] font-semibold">
+        11. What is the first shop the tourist is looking for?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q11" type="radio" value="A bookstore" /> A bookstore
+        </label>
+        <label>
+          <input class="mr-1" name="q11" type="radio" value="A pharmacy" /> A pharmacy
+        </label>
+        <label>
+          <input class="mr-1" name="q11" type="radio" value="A restaurant" /> A restaurant
+        </label>
+        <label>
+          <input class="mr-1" name="q11" type="radio" value="A clothing store" /> A clothing store
+        </label>
+      </form>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 12"
+      role="region"
+      aria-labelledby="q12-label"
+    >
+      <p id="q12-label" class="mb-2 text-[10px] font-semibold">
+        12. According to the shopkeeper, where is the bookstore located?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q12" type="radio" value="On the corner of Main Street and Oak Avenue" /> On the corner of Main Street and Oak Avenue
+        </label>
+        <label>
+          <input class="mr-1" name="q12" type="radio" value="Next to the coffee shop on Pine Street" /> Next to the coffee shop on Pine Street
+        </label>
+        <label>
+          <input class="mr-1" name="q12" type="radio" value="Opposite the post office on Elm Street" /> Opposite the post office on Elm Street
+        </label>
+        <label>
+          <input class="mr-1" name="q12" type="radio" value="Behind the bank on Cedar Road" /> Behind the bank on Cedar Road
+        </label>
+      </form>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 13"
+      role="region"
+      aria-labelledby="q13-label"
+    >
+      <p id="q13-label" class="mb-2 text-[10px] font-semibold">
+        13. How long does it take to walk to the pharmacy from the current location?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q13" type="radio" value="2 minutes" /> 2 minutes
+        </label>
+        <label>
+          <input class="mr-1" name="q13" type="radio" value="5 minutes" /> 5 minutes
+        </label>
+        <label>
+          <input class="mr-1" name="q13" type="radio" value="8 minutes" /> 8 minutes
+        </label>
+        <label>
+          <input class="mr-1" name="q13" type="radio" value="12 minutes" /> 12 minutes
+        </label>
+      </form>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 14"
+      role="region"
+      aria-labelledby="q14-label"
+    >
+      <p id="q14-label" class="mb-2 text-[10px] font-semibold">
+        14. What landmark should the tourist look for to find the Italian restaurant?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q14" type="radio" value="A large fountain" /> A large fountain
+        </label>
+        <label>
+          <input class="mr-1" name="q14" type="radio" value="A red brick building" /> A red brick building
+        </label>
+        <label>
+          <input class="mr-1" name="q14" type="radio" value="A statue of a famous person" /> A statue of a famous person
+        </label>
+        <label>
+          <input class="mr-1" name="q14" type="radio" value="A clock tower" /> A clock tower
+        </label>
+      </form>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 15"
+      role="region"
+      aria-labelledby="q15-label"
+    >
+      <p id="q15-label" class="mb-2 text-[10px] font-semibold">
+        15. What does the shopkeeper suggest the tourist should do if they get lost?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q15" type="radio" value="Return to the main square and start again" /> Return to the main square and start again
+        </label>
+        <label>
+          <input class="mr-1" name="q15" type="radio" value="Ask at the information center" /> Ask at the information center
+        </label>
+        <label>
+          <input class="mr-1" name="q15" type="radio" value="Call the tourist helpline" /> Call the tourist helpline
+        </label>
+        <label>
+          <input class="mr-1" name="q15" type="radio" value="Use the mobile app for directions" /> Use the mobile app for directions
+        </label>
+      </form>
+    </section>
+  </main>
+  <div class="next-button-container">
+    <a href="page7-listening.html" class="btn-animate inline-block text-center" aria-label="Next question">
+      Next
+    </a>
+  </div>
+  <script>
+    // Audio play count management
+    let playCount = 0;
+    const maxPlays = 3;
+    
+    function playAudio() {
+      const audio = document.getElementById('audioPlayer');
+      const playButton = document.getElementById('playButton');
+      const playCountDisplay = document.getElementById('playCount');
+      
+      if (playCount < maxPlays) {
+        playCount++;
+        playCountDisplay.textContent = `Plays remaining: ${maxPlays - playCount}/${maxPlays}`;
+        
+        // Simulate audio playing
+        playButton.innerHTML = '<i class="fas fa-pause"></i>';
+        playButton.disabled = true;
+        
+        // Simulate 3:20 duration (200 seconds)
+        setTimeout(() => {
+          playButton.innerHTML = '<i class="fas fa-play"></i>';
+          if (playCount < maxPlays) {
+            playButton.disabled = false;
+          } else {
+            playButton.disabled = true;
+            playCountDisplay.textContent = 'No plays remaining (0/3)';
+            playCountDisplay.style.color = '#dc2626';
+          }
+        }, 3000); // Shortened for demo
+      }
+    }
+
+    // 3D card tilt effect
+    const cards = document.querySelectorAll(".card");
+    cards.forEach((card) => {
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * 10;
+        const rotateY = ((x - centerX) / centerX) * 10;
+        card.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+      });
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+      });
+    });
+
+    // Countdown timer for 90 minutes (5400 seconds) with localStorage persistence
+    const totalSeconds = 90 * 60;
+    const progressBar = document.getElementById("progressBar");
+    const timeDisplay = document.getElementById("timeDisplay");
+    
+    let remainingSeconds;
+    const savedTime = localStorage.getItem('testRemainingTime');
+    const savedTimestamp = localStorage.getItem('testTimestamp');
+    
+    if (savedTime && savedTimestamp) {
+      const currentTime = Date.now();
+      const elapsedSeconds = Math.floor((currentTime - parseInt(savedTimestamp)) / 1000);
+      remainingSeconds = Math.max(0, parseInt(savedTime) - elapsedSeconds);
+    } else {
+      remainingSeconds = totalSeconds;
+      localStorage.setItem('testRemainingTime', remainingSeconds.toString());
+      localStorage.setItem('testTimestamp', Date.now().toString());
+    }
+
+    function updateCountdown() {
+      if (remainingSeconds < 0) {
+        remainingSeconds = 0;
+        clearInterval(timerInterval);
+        localStorage.removeItem('testRemainingTime');
+        localStorage.removeItem('testTimestamp');
+      }
+      
+      progressBar.value = remainingSeconds;
+      progressBar.setAttribute("aria-valuenow", remainingSeconds);
+
+      const hours = Math.floor(remainingSeconds / 3600);
+      const minutes = Math.floor((remainingSeconds % 3600) / 60);
+      const seconds = remainingSeconds % 60;
+      const displayText = `${hours}Jam ${minutes}Menit ${seconds}Detik`;
+      timeDisplay.textContent = displayText;
+      
+      localStorage.setItem('testRemainingTime', remainingSeconds.toString());
+      localStorage.setItem('testTimestamp', Date.now().toString());
+      
+      remainingSeconds--;
+    }
+
+    updateCountdown();
+    const timerInterval = setInterval(updateCountdown, 1000);
+
+    // Tab visibility detection and modal notification
+    let isTabSwitchModalShown = false;
+    
+    const modalHTML = `
+      <div id="tabSwitchModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 2rem; border-radius: 1rem; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);">
+          <div style="color: #dc2626; font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+          <h2 style="color: #1e293b; margin-bottom: 1rem; font-size: 1.25rem; font-weight: 700;">Peringatan!</h2>
+          <p style="color: #64748b; margin-bottom: 1.5rem; line-height: 1.5;">Anda terdeteksi membuka tab lain. Harap fokus pada halaman tes untuk melanjutkan.</p>
+          <button id="closeTabModal" style="background-color: #3b82f6; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: background-color 0.3s;">
+            Kembali ke Tes
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    const modal = document.getElementById('tabSwitchModal');
+    const closeBtn = document.getElementById('closeTabModal');
+    
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+      isTabSwitchModalShown = false;
+    });
+    
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && !isTabSwitchModalShown) {
+        setTimeout(() => {
+          if (document.hidden && !isTabSwitchModalShown) {
+            modal.style.display = 'flex';
+            isTabSwitchModalShown = true;
+          }
+        }, 1000);
+      }
+    });
+    
+    window.addEventListener('blur', () => {
+      if (!isTabSwitchModalShown) {
+        setTimeout(() => {
+          if (!document.hasFocus() && !isTabSwitchModalShown) {
+            modal.style.display = 'flex';
+            isTabSwitchModalShown = true;
+          }
+        }, 1000);
+      }
+    });
+  </script>
+</body>
+</html>

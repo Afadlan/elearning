@@ -1,0 +1,546 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <title>ReallyEnglish Placement Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
+      perspective: 1000px;
+      background-color: #f0f7ff;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* 3D Card container */
+    .card {
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      will-change: transform;
+      transform-style: preserve-3d;
+      border-radius: 1rem;
+      cursor: grab;
+      background: white;
+      box-shadow: 0 8px 15px rgba(59, 130, 246, 0.1);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      padding: 1.5rem;
+    }
+    .card:active {
+      cursor: grabbing;
+    }
+    .card:hover {
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+    }
+    /* Button 3D style */
+    .btn-animate {
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+      z-index: 10;
+      border-radius: 0.375rem;
+      box-shadow: 0 6px 0 #1e40af;
+      transform-style: preserve-3d;
+      transform-origin: center bottom;
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.875rem;
+      user-select: none;
+      cursor: pointer;
+    }
+    .btn-animate::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.5s ease;
+      z-index: 0;
+    }
+    .btn-animate:hover::before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .btn-animate:hover {
+      background-color: #2563eb; /* darker blue */
+      box-shadow: 0 12px 0 #1e40af;
+      transform: translateY(-4px) rotateX(10deg);
+      color: white;
+      z-index: 11;
+    }
+    .btn-animate:active {
+      box-shadow: 0 3px 0 #1e40af;
+      transform: translateY(-1px) rotateX(5deg);
+    }
+    /* Logo behind text container */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 90rem;
+      margin: 0 auto;
+    }
+    header .bg-logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      border-radius: 9999px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+    @media (max-width: 768px) {
+      header .bg-logo {
+        width: 120px;
+        height: 120px;
+        opacity: 0.1;
+      }
+    }
+    @media (max-width: 480px) {
+      header .bg-logo {
+        width: 80px;
+        height: 80px;
+        opacity: 0.08;
+      }
+    }
+    .font-golden {
+      font-weight: 700;
+      color: #2563eb;
+      font-size: 1.125rem;
+      user-select: none;
+    }
+    /* Scrollbar hidden for main content */
+    main::-webkit-scrollbar {
+      display: none;
+    }
+    main {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      position: relative;
+      padding-bottom: 5rem; /* space for fixed button */
+    }
+    /* Form radio spacing */
+    form label {
+      display: block;
+      margin-left: 1.25rem;
+      margin-bottom: 0.25rem;
+      font-size: 0.75rem;
+      color: #1e293b;
+      cursor: pointer;
+    }
+    form p {
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+      color: #334155;
+    }
+    /* Inner card for conversation text */
+    .inner-card {
+      border: 1px solid #334155;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: #1e293b;
+      line-height: 1.3;
+      margin-bottom: 1.5rem;
+      background: white;
+      user-select: text;
+    }
+    .inner-card p {
+      margin-bottom: 0.5rem;
+    }
+    .inner-card p strong {
+      font-weight: 700;
+    }
+    .inner-card p u {
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+    /* Progress bar styling */
+    progress {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 0.25rem;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+    progress::-webkit-progress-bar {
+      background-color: #cbd5e1;
+    }
+    progress::-webkit-progress-value {
+      background-color: #2563eb;
+      transition: width 1s linear;
+    }
+    progress::-moz-progress-bar {
+      background-color: #2563eb;
+      transition: width 1s linear;
+    }
+    /* Fixed next button bottom right */
+    .next-button-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 20;
+    }
+    @media (max-width: 640px) {
+      .next-button-container {
+        position: static;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 1.5rem;
+      }
+      main {
+        padding-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img
+      alt="ReallyEnglish logo with letters R and E in blue square"
+      class="relative z-10"
+      height="40"
+      src="https://storage.googleapis.com/a1aa/image/d09cce8d-911a-405c-e6b3-63ef1c89ae3a.jpg"
+      width="40"
+      decoding="async"
+      loading="lazy"
+    />
+    <span class="font-golden select-none">ReallyEnglish</span>
+    <img
+      alt="Large blue gradient circle shape behind header text"
+      class="bg-logo"
+      height="200"
+      src="https://storage.googleapis.com/a1aa/image/7a536139-0f90-464f-5576-28fa91748278.jpg"
+      width="200"
+      decoding="async"
+      loading="lazy"
+    />
+  </header>
+  <main class="max-w-4xl mx-auto px-6 py-8 flex-grow">
+    <section class="mb-6">
+      <div
+        class="bg-[#2563eb] text-white text-[10px] text-center py-1 rounded-md select-none font-semibold"
+        aria-label="Placement test title"
+      >
+        Placement - Placement Test Adults
+      </div>
+      <progress
+        id="progressBar"
+        max="5400"
+        value="3600"
+        aria-label="Placement test progress bar"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="5400"
+        aria-valuenow="3600"
+      ></progress>
+      <p
+        class="text-[10px] text-center text-black/80 select-none leading-tight"
+        aria-live="polite"
+        aria-atomic="true"
+        id="countdownText"
+      >
+        Durasi 90 menit<br />
+        <span id="timeDisplay" style="">1Jam 0Menit 0Detik</span>
+      </p>
+    </section>
+    <section
+      class="card rounded-xl"
+      aria-label="Reading Comprehension - Crisis Management Call section"
+      id="mainCard"
+    >
+      <div class="inner-card" aria-live="polite" aria-atomic="true">
+        <p class="font-bold text-center mb-1">
+          Reading Comprehension - Crisis Management Call (B2)
+        </p>
+        <p class="text-center mb-3">
+          Read the crisis management phone conversation below and answer questions 16-20.
+        </p>
+        <p class="font-bold mb-3">Emergency Crisis Management Call - Data Security Breach</p>
+        <p><strong>Crisis Manager:</strong> This is an emergency conference call regarding the data security incident reported this morning. I need immediate status updates from all department heads. IT Security, please begin with your assessment.</p>
+        <p><strong>IT Security Director:</strong> We detected unauthorized access to our customer database at approximately 3:47 AM. The breach appears to have originated from a sophisticated phishing attack that compromised an employee's credentials. We've immediately isolated the affected systems and are conducting a comprehensive forensic analysis.</p>
+        <p><strong>Legal Counsel:</strong> From a legal standpoint, we need to determine the scope of data compromised before we can assess our notification obligations. Do we have any indication of what specific information was accessed?</p>
+        <p><strong>IT Security Director:</strong> Preliminary analysis suggests that approximately 15,000 customer records may have been accessed, including names, email addresses, and encrypted payment information. However, we believe the encryption protocols prevented access to actual credit card numbers.</p>
+        <p><strong>PR Director:</strong> We need to prepare for potential media inquiries and customer concerns. I recommend we draft a transparent communication strategy that emphasizes our proactive response and the security measures we've implemented to prevent future incidents.</p>
+        <p><strong>Crisis Manager:</strong> Agreed. Legal, what are our regulatory requirements for disclosure?</p>
+        <p><strong>Legal Counsel:</strong> Under current data protection regulations, we have 72 hours to notify the relevant authorities and affected customers. Given the nature of the data involved, I strongly recommend we begin customer notifications within 24 hours to demonstrate our commitment to transparency.</p>
+        <p><strong>Customer Service Director:</strong> My team is prepared to handle increased call volumes. We've activated our crisis response protocol and brought in additional staff. We'll need talking points and FAQs from both Legal and PR to ensure consistent messaging.</p>
+        <p><strong>IT Security Director:</strong> I should mention that we've also engaged a third-party cybersecurity firm to assist with the investigation and to conduct a comprehensive security audit of our entire infrastructure.</p>
+        <p><strong>Crisis Manager:</strong> Excellent. Let's establish our immediate action items: IT will continue the forensic analysis and work with the external firm, Legal will prepare the regulatory notifications, PR will draft customer communications, and Customer Service will prepare for increased inquiries. We'll reconvene in four hours for another update. Any questions?</p>
+        <p><strong>PR Director:</strong> Should we proactively reach out to key media contacts, or wait for inquiries?</p>
+        <p><strong>Crisis Manager:</strong> Let's prepare a proactive statement but hold off on distribution until we have more definitive information from the forensic analysis. We want to be transparent but accurate.</p>
+      </div>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 16"
+      role="region"
+      aria-labelledby="q16-label"
+    >
+      <p id="q16-label" class="mb-2 text-[10px] font-semibold">
+        16. What caused the data security breach?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q16" type="radio" value="System malfunction" /> System malfunction
+        </label>
+        <label>
+          <input class="mr-1" name="q16" type="radio" value="Sophisticated phishing attack" /> Sophisticated phishing attack
+        </label>
+        <label>
+          <input class="mr-1" name="q16" type="radio" value="Physical break-in" /> Physical break-in
+        </label>
+        <label>
+          <input class="mr-1" name="q16" type="radio" value="Internal sabotage" /> Internal sabotage
+        </label>
+      </form>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 17"
+      role="region"
+      aria-labelledby="q17-label"
+    >
+      <p id="q17-label" class="mb-2 text-[10px] font-semibold">
+        17. Approximately how many customer records were potentially compromised?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q17" type="radio" value="5,000" /> 5,000
+        </label>
+        <label>
+          <input class="mr-1" name="q17" type="radio" value="15,000" /> 15,000
+        </label>
+        <label>
+          <input class="mr-1" name="q17" type="radio" value="25,000" /> 25,000
+        </label>
+        <label>
+          <input class="mr-1" name="q17" type="radio" value="50,000" /> 50,000
+        </label>
+      </form>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 18"
+      role="region"
+      aria-labelledby="q18-label"
+    >
+      <p id="q18-label" class="mb-2 text-[10px] font-semibold">
+        18. What is the regulatory requirement for notifying authorities and customers?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q18" type="radio" value="24 hours" /> 24 hours
+        </label>
+        <label>
+          <input class="mr-1" name="q18" type="radio" value="48 hours" /> 48 hours
+        </label>
+        <label>
+          <input class="mr-1" name="q18" type="radio" value="72 hours" /> 72 hours
+        </label>
+        <label>
+          <input class="mr-1" name="q18" type="radio" value="1 week" /> 1 week
+        </label>
+      </form>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 19"
+      role="region"
+      aria-labelledby="q19-label"
+    >
+      <p id="q19-label" class="mb-2 text-[10px] font-semibold">
+        19. What additional measure has the IT Security Director implemented?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q19" type="radio" value="Hired more security staff" /> Hired more security staff
+        </label>
+        <label>
+          <input class="mr-1" name="q19" type="radio" value="Engaged a third-party cybersecurity firm" /> Engaged a third-party cybersecurity firm
+        </label>
+        <label>
+          <input class="mr-1" name="q19" type="radio" value="Upgraded all computer systems" /> Upgraded all computer systems
+        </label>
+        <label>
+          <input class="mr-1" name="q19" type="radio" value="Implemented new software" /> Implemented new software
+        </label>
+      </form>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 20"
+      role="region"
+      aria-labelledby="q20-label"
+    >
+      <p id="q20-label" class="mb-2 text-[10px] font-semibold">
+        20. When will the team reconvene for the next update?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q20" type="radio" value="In two hours" /> In two hours
+        </label>
+        <label>
+          <input class="mr-1" name="q20" type="radio" value="In four hours" /> In four hours
+        </label>
+        <label>
+          <input class="mr-1" name="q20" type="radio" value="In six hours" /> In six hours
+        </label>
+        <label>
+          <input class="mr-1" name="q20" type="radio" value="Tomorrow morning" /> Tomorrow morning
+        </label>
+      </form>
+    </section>
+  </main>
+  <div class="next-button-container">
+    <a href="page8-reading.html" class="btn-animate inline-block text-center" aria-label="Next question">
+      Next
+    </a>
+  </div>
+  <script>
+    // 3D card tilt effect
+    const cards = document.querySelectorAll(".card");
+    cards.forEach((card) => {
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left; // x position within the element.
+        const y = e.clientY - rect.top; // y position within the element.
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * 10; // max 10deg rotation
+        const rotateY = ((x - centerX) / centerX) * 10;
+        card.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+      });
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+      });
+    });
+
+    // Countdown timer for 90 minutes (5400 seconds) with localStorage persistence
+    const totalSeconds = 90 * 60;
+    const progressBar = document.getElementById("progressBar");
+    const timeDisplay = document.getElementById("timeDisplay");
+    
+    // Initialize timer - check if timer already exists in localStorage
+    let remainingSeconds;
+    const savedTime = localStorage.getItem('testRemainingTime');
+    const savedTimestamp = localStorage.getItem('testTimestamp');
+    
+    if (savedTime && savedTimestamp) {
+      // Calculate elapsed time since last save
+      const currentTime = Date.now();
+      const elapsedSeconds = Math.floor((currentTime - parseInt(savedTimestamp)) / 1000);
+      remainingSeconds = Math.max(0, parseInt(savedTime) - elapsedSeconds);
+    } else {
+      // First time - start with full time
+      remainingSeconds = totalSeconds;
+      localStorage.setItem('testRemainingTime', remainingSeconds.toString());
+      localStorage.setItem('testTimestamp', Date.now().toString());
+    }
+
+    function updateCountdown() {
+      if (remainingSeconds < 0) {
+        remainingSeconds = 0;
+        clearInterval(timerInterval);
+        localStorage.removeItem('testRemainingTime');
+        localStorage.removeItem('testTimestamp');
+      }
+      
+      // Update progress bar value and aria-valuenow
+      progressBar.value = remainingSeconds;
+      progressBar.setAttribute("aria-valuenow", remainingSeconds);
+
+      // Update countdown text specifically for #timeDisplay
+      const hours = Math.floor(remainingSeconds / 3600);
+      const minutes = Math.floor((remainingSeconds % 3600) / 60);
+      const seconds = remainingSeconds % 60;
+      const displayText = `${hours}Jam ${minutes}Menit ${seconds}Detik`;
+      timeDisplay.textContent = displayText;
+      
+      // Save current state to localStorage
+      localStorage.setItem('testRemainingTime', remainingSeconds.toString());
+      localStorage.setItem('testTimestamp', Date.now().toString());
+      
+      remainingSeconds--;
+    }
+
+    updateCountdown();
+    const timerInterval = setInterval(updateCountdown, 1000);
+
+    // Tab visibility detection and modal notification
+    let isTabSwitchModalShown = false;
+    
+    // Create modal HTML
+    const modalHTML = `
+      <div id="tabSwitchModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 2rem; border-radius: 1rem; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);">
+          <div style="color: #dc2626; font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+          <h2 style="color: #1e293b; margin-bottom: 1rem; font-size: 1.25rem; font-weight: 700;">Peringatan!</h2>
+          <p style="color: #64748b; margin-bottom: 1.5rem; line-height: 1.5;">Anda terdeteksi membuka tab lain. Harap fokus pada halaman tes untuk melanjutkan.</p>
+          <button id="closeTabModal" style="background-color: #3b82f6; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: background-color 0.3s;">
+            Kembali ke Tes
+          </button>
+        </div>
+      </div>
+    `;
+    
+    // Add modal to page
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    const modal = document.getElementById('tabSwitchModal');
+    const closeBtn = document.getElementById('closeTabModal');
+    
+    // Close modal function
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+      isTabSwitchModalShown = false;
+    });
+    
+    // Detect tab visibility change
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && !isTabSwitchModalShown) {
+        // User switched to another tab
+        setTimeout(() => {
+          if (document.hidden && !isTabSwitchModalShown) {
+            modal.style.display = 'flex';
+            isTabSwitchModalShown = true;
+          }
+        }, 1000); // Show modal after 1 second of being hidden
+      }
+    });
+    
+    // Also detect window blur (when user clicks outside browser)
+    window.addEventListener('blur', () => {
+      if (!isTabSwitchModalShown) {
+        setTimeout(() => {
+          if (!document.hasFocus() && !isTabSwitchModalShown) {
+            modal.style.display = 'flex';
+            isTabSwitchModalShown = true;
+          }
+        }, 1000);
+      }
+    });
+  </script>
+</body>
+</html>

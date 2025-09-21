@@ -1,0 +1,547 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <title>ReallyEnglish Placement Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
+      perspective: 1000px;
+      background-color: #f0f7ff;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* 3D Card container */
+    .card {
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      will-change: transform;
+      transform-style: preserve-3d;
+      border-radius: 1rem;
+      cursor: grab;
+      background: white;
+      box-shadow: 0 8px 15px rgba(59, 130, 246, 0.1);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      padding: 1.5rem;
+    }
+    .card:active {
+      cursor: grabbing;
+    }
+    .card:hover {
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+    }
+    /* Button 3D style */
+    .btn-animate {
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+      z-index: 10;
+      border-radius: 0.375rem;
+      box-shadow: 0 6px 0 #1e40af;
+      transform-style: preserve-3d;
+      transform-origin: center bottom;
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.875rem;
+      user-select: none;
+      cursor: pointer;
+    }
+    .btn-animate::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.5s ease;
+      z-index: 0;
+    }
+    .btn-animate:hover::before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .btn-animate:hover {
+      background-color: #2563eb; /* darker blue */
+      box-shadow: 0 12px 0 #1e40af;
+      transform: translateY(-4px) rotateX(10deg);
+      color: white;
+      z-index: 11;
+    }
+    .btn-animate:active {
+      box-shadow: 0 3px 0 #1e40af;
+      transform: translateY(-1px) rotateX(5deg);
+    }
+    /* Logo behind text container */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 90rem;
+      margin: 0 auto;
+    }
+    header .bg-logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      border-radius: 9999px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+    @media (max-width: 768px) {
+      header .bg-logo {
+        width: 120px;
+        height: 120px;
+        opacity: 0.1;
+      }
+    }
+    @media (max-width: 480px) {
+      header .bg-logo {
+        width: 80px;
+        height: 80px;
+        opacity: 0.08;
+      }
+    }
+    .font-golden {
+      font-weight: 700;
+      color: #2563eb;
+      font-size: 1.125rem;
+      user-select: none;
+    }
+    /* Scrollbar hidden for main content */
+    main::-webkit-scrollbar {
+      display: none;
+    }
+    main {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      position: relative;
+      padding-bottom: 5rem; /* space for fixed button */
+    }
+    /* Form radio spacing */
+    form label {
+      display: block;
+      margin-left: 1.25rem;
+      margin-bottom: 0.25rem;
+      font-size: 0.75rem;
+      color: #1e293b;
+      cursor: pointer;
+    }
+    form p {
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+      color: #334155;
+    }
+    /* Inner card for conversation text */
+    .inner-card {
+      border: 1px solid #334155;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: #1e293b;
+      line-height: 1.3;
+      margin-bottom: 1.5rem;
+      background: white;
+      user-select: text;
+    }
+    .inner-card p {
+      margin-bottom: 0.5rem;
+    }
+    .inner-card p strong {
+      font-weight: 700;
+    }
+    .inner-card p u {
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+    /* Progress bar styling */
+    progress {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 0.25rem;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+    progress::-webkit-progress-bar {
+      background-color: #cbd5e1;
+    }
+    progress::-webkit-progress-value {
+      background-color: #2563eb;
+      transition: width 1s linear;
+    }
+    progress::-moz-progress-bar {
+      background-color: #2563eb;
+      transition: width 1s linear;
+    }
+    /* Fixed next button bottom right */
+    .next-button-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 20;
+    }
+    @media (max-width: 640px) {
+      .next-button-container {
+        position: static;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 1.5rem;
+      }
+      main {
+        padding-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img
+      alt="ReallyEnglish logo with letters R and E in blue square"
+      class="relative z-10"
+      height="40"
+      src="https://storage.googleapis.com/a1aa/image/d09cce8d-911a-405c-e6b3-63ef1c89ae3a.jpg"
+      width="40"
+      decoding="async"
+      loading="lazy"
+    />
+    <span class="font-golden select-none">ReallyEnglish</span>
+    <img
+      alt="Large blue gradient circle shape behind header text"
+      class="bg-logo"
+      height="200"
+      src="https://storage.googleapis.com/a1aa/image/7a536139-0f90-464f-5576-28fa91748278.jpg"
+      width="200"
+      decoding="async"
+      loading="lazy"
+    />
+  </header>
+  <main class="max-w-4xl mx-auto px-6 py-8 flex-grow">
+    <section class="mb-6">
+      <div
+        class="bg-[#2563eb] text-white text-[10px] text-center py-1 rounded-md select-none font-semibold"
+        aria-label="Placement test title"
+      >
+        Placement - Placement Test Adults
+      </div>
+      <progress
+        id="progressBar"
+        max="5400"
+        value="4800"
+        aria-label="Placement test progress bar"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="5400"
+        aria-valuenow="4800"
+      ></progress>
+      <p
+        class="text-[10px] text-center text-black/80 select-none leading-tight"
+        aria-live="polite"
+        aria-atomic="true"
+        id="countdownText"
+      >
+        Durasi 90 menit<br />
+        <span id="timeDisplay" style="">1Jam 20Menit 0Detik</span>
+      </p>
+    </section>
+    <section
+      class="card rounded-xl"
+      aria-label="Reading Comprehension - Customer Service Call section"
+      id="mainCard"
+    >
+      <div class="inner-card" aria-live="polite" aria-atomic="true">
+        <p class="font-bold text-center mb-1">
+          Reading Comprehension - Customer Service Call (B2)
+        </p>
+        <p class="text-center mb-3">
+          Read the customer service phone conversation below and answer questions 6-10.
+        </p>
+        <p class="font-bold mb-3">Customer Service Call - TechSupport Plus</p>
+        <p><strong>Agent:</strong> Thank you for calling TechSupport Plus. This is Emma speaking. Before we begin, may I have your customer ID number for verification purposes?</p>
+        <p><strong>Customer:</strong> Yes, it's TS-4789-2024. I'm calling because I've been experiencing some serious issues with my internet connection for the past three days.</p>
+        <p><strong>Agent:</strong> I'm sorry to hear about the connectivity problems, Mr. Rodriguez. Let me pull up your account... I can see you're on our Premium Business package. Can you describe the specific issues you're encountering?</p>
+        <p><strong>Customer:</strong> Well, the connection keeps dropping every few hours, and when it is working, the speed is significantly slower than what I'm paying for. I run a small online business, so this is really affecting my operations.</p>
+        <p><strong>Agent:</strong> I completely understand how frustrating this must be for your business. Let me run some diagnostic tests on your line... I'm seeing some signal interference in your area. There appears to be maintenance work being conducted on the main fiber optic cables in your neighborhood.</p>
+        <p><strong>Customer:</strong> How long is this maintenance expected to last? I wasn't notified about any scheduled work.</p>
+        <p><strong>Agent:</strong> I apologize for the lack of communication. The maintenance was scheduled as an emergency repair due to storm damage last week. It should be completed by tomorrow evening. However, I'd like to offer you some compensation for the inconvenience.</p>
+        <p><strong>Customer:</strong> What kind of compensation are we talking about?</p>
+        <p><strong>Agent:</strong> I can provide you with a full credit for this week's service, which amounts to $47.50, and I'll also upgrade your connection speed at no additional cost for the next three months. Additionally, I'm setting up a priority support flag on your account.</p>
+        <p><strong>Customer:</strong> That sounds reasonable. Will the upgrade be automatic, or do I need to do anything on my end?</p>
+        <p><strong>Agent:</strong> The upgrade will be applied automatically to your account within 24 hours after the maintenance is completed. You'll receive a confirmation email with all the details. Is there anything else I can help you with today?</p>
+        <p><strong>Customer:</strong> No, that covers everything. Thank you for your help, Emma. I appreciate the quick resolution.</p>
+        <p><strong>Agent:</strong> You're very welcome, Mr. Rodriguez. We value your business and apologize again for the inconvenience. Have a great day!</p>
+      </div>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 6"
+      role="region"
+      aria-labelledby="q6-label"
+    >
+      <p id="q6-label" class="mb-2 text-[10px] font-semibold">
+        6. What is the customer's main complaint?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q6" type="radio" value="Billing issues with his account" /> Billing issues with his account
+        </label>
+        <label>
+          <input class="mr-1" name="q6" type="radio" value="Internet connection problems" /> Internet connection problems
+        </label>
+        <label>
+          <input class="mr-1" name="q6" type="radio" value="Slow customer service response" /> Slow customer service response
+        </label>
+        <label>
+          <input class="mr-1" name="q6" type="radio" value="Equipment malfunction" /> Equipment malfunction
+        </label>
+      </form>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 7"
+      role="region"
+      aria-labelledby="q7-label"
+    >
+      <p id="q7-label" class="mb-2 text-[10px] font-semibold">
+        7. What caused the internet connectivity issues?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q7" type="radio" value="Customer's equipment failure" /> Customer's equipment failure
+        </label>
+        <label>
+          <input class="mr-1" name="q7" type="radio" value="Maintenance work on fiber optic cables" /> Maintenance work on fiber optic cables
+        </label>
+        <label>
+          <input class="mr-1" name="q7" type="radio" value="Network overload during peak hours" /> Network overload during peak hours
+        </label>
+        <label>
+          <input class="mr-1" name="q7" type="radio" value="Unpaid bills causing service suspension" /> Unpaid bills causing service suspension
+        </label>
+      </form>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 8"
+      role="region"
+      aria-labelledby="q8-label"
+    >
+      <p id="q8-label" class="mb-2 text-[10px] font-semibold">
+        8. When is the maintenance work expected to be completed?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q8" type="radio" value="Later today" /> Later today
+        </label>
+        <label>
+          <input class="mr-1" name="q8" type="radio" value="Tomorrow evening" /> Tomorrow evening
+        </label>
+        <label>
+          <input class="mr-1" name="q8" type="radio" value="Next week" /> Next week
+        </label>
+        <label>
+          <input class="mr-1" name="q8" type="radio" value="Within 24 hours" /> Within 24 hours
+        </label>
+      </form>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 9"
+      role="region"
+      aria-labelledby="q9-label"
+    >
+      <p id="q9-label" class="mb-2 text-[10px] font-semibold">
+        9. What compensation does the agent offer?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q9" type="radio" value="Free equipment replacement" /> Free equipment replacement
+        </label>
+        <label>
+          <input class="mr-1" name="q9" type="radio" value="Service credit and speed upgrade" /> Service credit and speed upgrade
+        </label>
+        <label>
+          <input class="mr-1" name="q9" type="radio" value="Full refund for the month" /> Full refund for the month
+        </label>
+        <label>
+          <input class="mr-1" name="q9" type="radio" value="Extended warranty coverage" /> Extended warranty coverage
+        </label>
+      </form>
+    </section>
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Question 10"
+      role="region"
+      aria-labelledby="q10-label"
+    >
+      <p id="q10-label" class="mb-2 text-[10px] font-semibold">
+        10. How long will the customer receive the upgraded connection speed?
+      </p>
+      <form>
+        <label>
+          <input class="mr-1" name="q10" type="radio" value="One month" /> One month
+        </label>
+        <label>
+          <input class="mr-1" name="q10" type="radio" value="Three months" /> Three months
+        </label>
+        <label>
+          <input class="mr-1" name="q10" type="radio" value="Six months" /> Six months
+        </label>
+        <label>
+          <input class="mr-1" name="q10" type="radio" value="Permanently" /> Permanently
+        </label>
+      </form>
+    </section>
+  </main>
+  <div class="next-button-container">
+    <a href="page6-reading.html" class="btn-animate inline-block text-center" aria-label="Next question">
+      Next
+    </a>
+  </div>
+  <script>
+    // 3D card tilt effect
+    const cards = document.querySelectorAll(".card");
+    cards.forEach((card) => {
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left; // x position within the element.
+        const y = e.clientY - rect.top; // y position within the element.
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * 10; // max 10deg rotation
+        const rotateY = ((x - centerX) / centerX) * 10;
+        card.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+      });
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+      });
+    });
+
+    // Countdown timer for 90 minutes (5400 seconds) with localStorage persistence
+    const totalSeconds = 90 * 60;
+    const progressBar = document.getElementById("progressBar");
+    const timeDisplay = document.getElementById("timeDisplay");
+    
+    // Initialize timer - check if timer already exists in localStorage
+    let remainingSeconds;
+    const savedTime = localStorage.getItem('testRemainingTime');
+    const savedTimestamp = localStorage.getItem('testTimestamp');
+    
+    if (savedTime && savedTimestamp) {
+      // Calculate elapsed time since last save
+      const currentTime = Date.now();
+      const elapsedSeconds = Math.floor((currentTime - parseInt(savedTimestamp)) / 1000);
+      remainingSeconds = Math.max(0, parseInt(savedTime) - elapsedSeconds);
+    } else {
+      // First time - start with full time
+      remainingSeconds = totalSeconds;
+      localStorage.setItem('testRemainingTime', remainingSeconds.toString());
+      localStorage.setItem('testTimestamp', Date.now().toString());
+    }
+
+    function updateCountdown() {
+      if (remainingSeconds < 0) {
+        remainingSeconds = 0;
+        clearInterval(timerInterval);
+        localStorage.removeItem('testRemainingTime');
+        localStorage.removeItem('testTimestamp');
+      }
+      
+      // Update progress bar value and aria-valuenow
+      progressBar.value = remainingSeconds;
+      progressBar.setAttribute("aria-valuenow", remainingSeconds);
+
+      // Update countdown text specifically for #timeDisplay
+      const hours = Math.floor(remainingSeconds / 3600);
+      const minutes = Math.floor((remainingSeconds % 3600) / 60);
+      const seconds = remainingSeconds % 60;
+      const displayText = `${hours}Jam ${minutes}Menit ${seconds}Detik`;
+      timeDisplay.textContent = displayText;
+      
+      // Save current state to localStorage
+      localStorage.setItem('testRemainingTime', remainingSeconds.toString());
+      localStorage.setItem('testTimestamp', Date.now().toString());
+      
+      remainingSeconds--;
+    }
+
+    updateCountdown();
+    const timerInterval = setInterval(updateCountdown, 1000);
+
+    // Tab visibility detection and modal notification
+    let isTabSwitchModalShown = false;
+    
+    // Create modal HTML
+    const modalHTML = `
+      <div id="tabSwitchModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 2rem; border-radius: 1rem; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);">
+          <div style="color: #dc2626; font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+          <h2 style="color: #1e293b; margin-bottom: 1rem; font-size: 1.25rem; font-weight: 700;">Peringatan!</h2>
+          <p style="color: #64748b; margin-bottom: 1.5rem; line-height: 1.5;">Anda terdeteksi membuka tab lain. Harap fokus pada halaman tes untuk melanjutkan.</p>
+          <button id="closeTabModal" style="background-color: #3b82f6; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: background-color 0.3s;">
+            Kembali ke Tes
+          </button>
+        </div>
+      </div>
+    `;
+    
+    // Add modal to page
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    const modal = document.getElementById('tabSwitchModal');
+    const closeBtn = document.getElementById('closeTabModal');
+    
+    // Close modal function
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+      isTabSwitchModalShown = false;
+    });
+    
+    // Detect tab visibility change
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && !isTabSwitchModalShown) {
+        // User switched to another tab
+        setTimeout(() => {
+          if (document.hidden && !isTabSwitchModalShown) {
+            modal.style.display = 'flex';
+            isTabSwitchModalShown = true;
+          }
+        }, 1000); // Show modal after 1 second of being hidden
+      }
+    });
+    
+    // Also detect window blur (when user clicks outside browser)
+    window.addEventListener('blur', () => {
+      if (!isTabSwitchModalShown) {
+        setTimeout(() => {
+          if (!document.hasFocus() && !isTabSwitchModalShown) {
+            modal.style.display = 'flex';
+            isTabSwitchModalShown = true;
+          }
+        }, 1000);
+      }
+    });
+  </script>
+</body>
+</html>

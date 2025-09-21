@@ -1,0 +1,300 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   ReallyEnglish Placement Test
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+      font-family: "Roboto", sans-serif;
+      perspective: 1000px;
+    }
+    /* 3D Card container */
+    .card {
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      will-change: transform;
+      transform-style: preserve-3d;
+      border-radius: 1rem;
+      cursor: grab;
+      background: white;
+      box-shadow: 0 8px 15px rgba(59, 130, 246, 0.1);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      width: 100%;
+      max-width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+    }
+    .card:active {
+      cursor: grabbing;
+    }
+    .card:hover {
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+    }
+    /* Button 3D style */
+    .btn-animate {
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+      z-index: 10;
+      border-radius: 0.375rem;
+      box-shadow: 0 6px 0 #1e40af;
+      transform-style: preserve-3d;
+      transform-origin: center bottom;
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.875rem;
+      user-select: none;
+      cursor: pointer;
+      white-space: nowrap;
+      min-width: 110px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    .btn-animate::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.5s ease;
+      z-index: 0;
+    }
+    .btn-animate:hover::before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .btn-animate:hover {
+      background-color: #2563eb; /* darker blue */
+      box-shadow: 0 12px 0 #1e40af;
+      transform: translateY(-4px) rotateX(10deg);
+      color: white;
+      z-index: 11;
+    }
+    .btn-animate:active {
+      box-shadow: 0 3px 0 #1e40af;
+      transform: translateY(-1px) rotateX(5deg);
+    }
+    /* Logo behind text container */
+    header {
+      position: relative;
+      z-index: 10;
+    }
+    header .bg-logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      border-radius: 9999px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      header .bg-logo {
+        width: 120px;
+        height: 120px;
+        opacity: 0.1;
+      }
+      .study-practice-container > * + * {
+        margin-top: 0.5rem;
+      }
+      .card {
+        max-width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        border-radius: 0;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+      }
+      .card > div:first-child {
+        flex: 1 1 auto;
+        min-width: 0;
+        margin-bottom: 0 !important;
+      }
+      .card > div:first-child h2 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .card > div:last-child,
+      .card > button {
+        margin-top: 0 !important;
+        margin-left: 1rem !important;
+        flex-shrink: 0;
+      }
+    }
+    @media (max-width: 480px) {
+      header .bg-logo {
+        width: 80px;
+        height: 80px;
+        opacity: 0.08;
+      }
+      .study-practice-container > * + * {
+        margin-top: 0.5rem;
+      }
+      .card {
+        max-width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        border-radius: 0;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+      }
+      .card > div:first-child {
+        flex: 1 1 auto;
+        min-width: 0;
+        margin-bottom: 0 !important;
+      }
+      .card > div:first-child h2 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .card > div:last-child,
+      .card > button {
+        margin-top: 0 !important;
+        margin-left: 1rem !important;
+        flex-shrink: 0;
+      }
+    }
+  </style>
+ </head>
+ <body class="bg-[#f0f7ff] min-h-screen flex flex-col">
+  <header class="flex flex-wrap items-center gap-3 px-6 sm:px-10 py-6 max-w-[90rem] mx-auto">
+   <img alt="ReallyEnglish logo with letters R and E in blue square" class="w-[60px] h-[60px] object-contain relative z-10" height="60" src="https://storage.googleapis.com/a1aa/image/d09cce8d-911a-405c-e6b3-63ef1c89ae3a.jpg" width="60"/>
+   <div class="relative z-10">
+    <h1 class="text-[28px] font-extrabold text-[#2563eb] leading-none">
+     ReallyEnglish
+    </h1>
+    <p class="italic text-[16px] font-normal text-black/80 -mt-1">
+     Now Everyone Can Speak English
+    </p>
+   </div>
+   <img alt="Large blue gradient circle shape behind header text" class="bg-logo" height="200" src="https://storage.googleapis.com/a1aa/image/7a536139-0f90-464f-5576-28fa91748278.jpg" width="200"/>
+  </header>
+  <main class="max-w-[90rem] mx-auto flex flex-col gap-6 px-4 sm:px-10 flex-grow w-full">
+    <!-- Study and Practice container with reduced spacing on small screens -->
+    <div class="study-practice-container flex flex-col gap-6 sm:gap-12 w-full">
+      <!-- Study (border color same as Practice) -->
+      <div class="card flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white px-6 py-4 rounded-md shadow-sm w-full">
+        <div class="flex items-center space-x-4 mb-4 sm:mb-0 min-w-0">
+          <div class="relative w-16 h-16 flex-shrink-0 flex items-center justify-center rounded-full border-4 border-gray-300 bg-white">
+            <span class="text-sm font-normal text-black">0/20</span>
+          </div>
+          <h2 class="font-extrabold text-lg text-black truncate">Study</h2>
+        </div>
+        <div class="relative w-16 h-16 flex-shrink-0 flex items-center justify-center rounded-full bg-gray-200 mx-auto sm:mx-0">
+          <i class="fas fa-lock text-gray-500 text-lg"></i>
+        </div>
+      </div>
+
+      <!-- Practice (original border color) -->
+      <div class="card flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white px-6 py-6 rounded-md shadow-sm w-full">
+        <div class="flex items-center space-x-4 mb-4 sm:mb-0 min-w-0">
+          <div class="relative w-16 h-16 flex-shrink-0 flex items-center justify-center rounded-full border-4 border-gray-300">
+            <span class="text-sm font-normal text-black">0/33</span>
+          </div>
+          <h2 class="font-extrabold text-lg text-black truncate">Practice</h2>
+        </div>
+        <div class="relative w-16 h-16 flex-shrink-0 flex items-center justify-center rounded-full bg-gray-200 mx-auto sm:mx-0">
+          <i class="fas fa-lock text-gray-500 text-lg"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vertical line connecting Practice and Test on larger screens -->
+    <div class="relative w-full">
+      <div class="absolute left-20 top-0 bottom-0 w-0.5 bg-blue-300 hidden sm:block"></div>
+    </div>
+
+    <!-- Test with blue block and open test button -->
+    <div class="card flex flex-col sm:flex-row sm:items-center sm:justify-between bg-blue-200 px-6 py-6 rounded-md shadow-sm w-full">
+      <div class="flex items-center space-x-4 mb-4 sm:mb-0 flex-1 min-w-0">
+        <div class="relative w-16 h-16 flex-shrink-0 flex items-center justify-center rounded-full border-4 border-blue-400 bg-white">
+          <span class="text-sm font-normal text-black">0/25</span>
+        </div>
+        <h2 class="font-extrabold text-lg text-black truncate">Test</h2>
+      </div>
+      <button
+        onclick="openTest()"
+        class="btn-animate px-6 py-3 rounded-full text-sm whitespace-nowrap mt-0 sm:mt-0 sm:ml-4 self-auto inline-block text-center"
+      >
+        Open Test
+      </button>
+    </div>
+  </main>
+  <script>
+   // 3D card tilt effect
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left; // x position within the element.
+        const y = e.clientY - rect.top;  // y position within the element.
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * 10; // max 10deg rotation
+        const rotateY = ((x - centerX) / centerX) * 10;
+        card.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+      });
+    });
+
+    // Navigation based on program selection from page2
+    function openTest() {
+      const selectedProgram = localStorage.getItem('selectedProgram');
+      
+      if (selectedProgram === 'business-speaking') {
+        // Business Speaking path: go to negotiating speaking
+        window.location.href = 'speaking-negotiating-1.html';
+      } else {
+        // Practical English path: go to page4 (grammar)
+        window.location.href = 'page4.html';
+      }
+    }
+
+    // Check if user came from page2 with selection
+window.addEventListener('load', function() {
+  const selectedProgram = localStorage.getItem('selectedProgram');
+  
+  if (selectedProgram === 'business-speaking') {
+    // Update the test card to show Business Speaking
+    const testCard = document.querySelector('.card:last-child');
+    const testTitle = testCard.querySelector('h2');
+    testTitle.textContent = 'Business Speaking Test';
+    
+    // Update button text
+    const button = testCard.querySelector('button');
+    button.textContent = 'Start Speaking Test';
+  } else {
+    // Update for Practical English
+    const testCard = document.querySelector('.card:last-child');
+    const testTitle = testCard.querySelector('h2');
+    testTitle.textContent = 'Practical English Test';
+    
+    // Update button text
+    const button = testCard.querySelector('button');
+    button.textContent = 'Start Grammar Test';
+  }
+});
+  </script>
+ </body>
+</html>

@@ -1,0 +1,733 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <title>IELTS Speaking - Negotiating Practice</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
+      perspective: 1000px;
+      background-color: #f0f7ff;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* 3D Card container */
+    .card {
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      will-change: transform;
+      transform-style: preserve-3d;
+      border-radius: 1rem;
+      cursor: grab;
+      background: white;
+      box-shadow: 0 8px 15px rgba(59, 130, 246, 0.1);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      padding: 1.5rem;
+    }
+    .card:active {
+      cursor: grabbing;
+    }
+    .card:hover {
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+    }
+    /* Button 3D style */
+    .btn-animate {
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+      z-index: 10;
+      border-radius: 0.375rem;
+      box-shadow: 0 6px 0 #1e40af;
+      transform-style: preserve-3d;
+      transform-origin: center bottom;
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.875rem;
+      user-select: none;
+      cursor: pointer;
+    }
+    .btn-animate::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.5s ease;
+      z-index: 0;
+    }
+    .btn-animate:hover::before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .btn-animate:hover {
+      background-color: #2563eb;
+      box-shadow: 0 12px 0 #1e40af;
+      transform: translateY(-4px) rotateX(10deg);
+      color: white;
+      z-index: 11;
+    }
+    .btn-animate:active {
+      box-shadow: 0 3px 0 #1e40af;
+      transform: translateY(-1px) rotateX(5deg);
+    }
+    /* Speaking interface styling */
+    .speaking-interface {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+    .microphone-button {
+      background: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 4rem;
+      height: 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.5rem;
+      margin: 0 auto 1rem;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+    .microphone-button:hover {
+      background: #b91c1c;
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+    }
+    .microphone-button.recording {
+      background: #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+    .microphone-button.processing {
+      background: #f59e0b;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .recording-status {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+    .transcript-display {
+      background: white;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin: 1rem 0;
+      min-height: 3rem;
+      text-align: left;
+      font-size: 0.875rem;
+      color: #374151;
+    }
+    .feedback-section {
+      background: #f0f9ff;
+      border: 1px solid #0ea5e9;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin: 1rem 0;
+      text-align: left;
+    }
+    .score-display {
+      display: flex;
+      justify-content: space-around;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .score-item {
+      background: white;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      text-align: center;
+      flex: 1;
+      min-width: 120px;
+    }
+    .score-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #059669;
+    }
+    .score-label {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+    .duration-warning {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      font-size: 0.75rem;
+      color: #92400e;
+    }
+    /* Logo behind text container */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 90rem;
+      margin: 0 auto;
+    }
+    header .bg-logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      border-radius: 9999px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+    @media (max-width: 768px) {
+      header .bg-logo {
+        width: 120px;
+        height: 120px;
+        opacity: 0.1;
+      }
+    }
+    @media (max-width: 480px) {
+      header .bg-logo {
+        width: 80px;
+        height: 80px;
+        opacity: 0.08;
+      }
+    }
+    .font-golden {
+      font-weight: 700;
+      color: #2563eb;
+      font-size: 1.125rem;
+      user-select: none;
+    }
+    /* Scrollbar hidden for main content */
+    main::-webkit-scrollbar {
+      display: none;
+    }
+    main {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      position: relative;
+      padding-bottom: 5rem;
+    }
+    /* Inner card for conversation text */
+    .inner-card {
+      border: 1px solid #334155;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: #1e293b;
+      line-height: 1.3;
+      margin-bottom: 1.5rem;
+      background: white;
+      user-select: text;
+    }
+    .inner-card p {
+      margin-bottom: 0.5rem;
+    }
+    .inner-card p strong {
+      font-weight: 700;
+    }
+    /* Progress bar styling */
+    progress {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 0.25rem;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+    progress::-webkit-progress-bar {
+      background-color: #cbd5e1;
+    }
+    progress::-webkit-progress-value {
+      background-color: #2563eb;
+      transition: width 1s linear;
+    }
+    progress::-moz-progress-bar {
+      background-color: #2563eb;
+      transition: width 1s linear;
+    }
+    /* Fixed next button bottom right */
+    .next-button-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 20;
+    }
+    @media (max-width: 640px) {
+      .next-button-container {
+        position: static;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 1.5rem;
+      }
+      main {
+        padding-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img
+      alt="ReallyEnglish logo with letters R and E in blue square"
+      class="relative z-10"
+      height="40"
+      src="https://storage.googleapis.com/a1aa/image/d09cce8d-911a-405c-e6b3-63ef1c89ae3a.jpg"
+      width="40"
+      decoding="async"
+      loading="lazy"
+    />
+    <span class="font-golden select-none">ReallyEnglish</span>
+    <img
+      alt="Large blue gradient circle shape behind header text"
+      class="bg-logo"
+      height="200"
+      src="https://storage.googleapis.com/a1aa/image/7a536139-0f90-464f-5576-28fa91748278.jpg"
+      width="200"
+      decoding="async"
+      loading="lazy"
+    />
+  </header>
+  <main class="max-w-4xl mx-auto px-6 py-8 flex-grow">
+    <section class="mb-6">
+      <div
+        class="bg-[#2563eb] text-white text-[10px] text-center py-1 rounded-md select-none font-semibold"
+        aria-label="IELTS Speaking test title"
+      >
+        IELTS Speaking Practice - Negotiating Skills (B1 Level)
+      </div>
+      <progress
+        id="progressBar"
+        max="100"
+        value="10"
+        aria-label="Speaking test progress bar"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="10"
+      ></progress>
+      <p
+        class="text-[10px] text-center text-black/80 select-none leading-tight"
+        aria-live="polite"
+        aria-atomic="true"
+        id="countdownText"
+      >
+        Questions 1-2 of 10<br />
+        <span id="timeDisplay">Negotiating Practice</span>
+      </p>
+    </section>
+    <section
+      class="card rounded-xl"
+      aria-label="Speaking Assessment - Negotiating section"
+      id="mainCard"
+    >
+      <div class="inner-card" aria-live="polite" aria-atomic="true">
+        <p class="font-bold text-center mb-1">
+          IELTS Speaking - Negotiating Skills (B1)
+        </p>
+        <p class="text-center mb-3">
+          Practice your negotiation skills in English. Speak clearly and confidently. Minimum speaking time: 1 minute per question.
+        </p>
+        <p class="font-bold mb-3">Part 1: Basic Negotiation Scenarios</p>
+        
+        <div class="speaking-interface">
+          <p class="text-sm font-semibold mb-2">🎤 Speaking Task 1 - Read Aloud</p>
+          <p class="text-sm mb-4"><strong>Instructions:</strong> Read the following passage aloud clearly and naturally. You will be assessed on pronunciation, fluency, and intonation.</p>
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 text-left">
+            <p class="text-sm font-semibold mb-2">Negotiating a Car Purchase</p>
+            <p class="text-sm leading-relaxed">
+              "Good morning! I'm very interested in this car, but I have to be honest with you about my budget. The asking price is eight thousand dollars, which is a bit higher than what I can afford right now. I have six thousand five hundred dollars available. I understand this is a significant difference, but I'm wondering if we could work something out. What if we could meet somewhere in the middle? I'm a serious buyer and I'm ready to make a decision today if we can find a price that works for both of us. Could you consider seven thousand dollars? That would really help me, and you'd have a quick sale."
+            </p>
+          </div>
+          <p class="text-xs text-blue-600 mb-4"><em>Read clearly and with appropriate expression. Focus on natural pauses and intonation.</em></p>
+          
+          <button id="micButton1" class="microphone-button" onclick="toggleRecording(1)">
+            <i class="fas fa-microphone"></i>
+          </button>
+          
+          <div id="recordingStatus1" class="recording-status">
+            Click the microphone to start recording (Minimum 1 minute)
+          </div>
+          
+          <div id="transcript1" class="transcript-display">
+            Your speech will appear here as you speak...
+          </div>
+          
+          <div id="feedback1" class="feedback-section" style="display: none;">
+            <h4 class="font-semibold mb-2">📊 Analysis Results</h4>
+            <div class="score-display">
+              <div class="score-item">
+                <div id="grammarScore1" class="score-value">--</div>
+                <div class="score-label">Grammar</div>
+              </div>
+              <div class="score-item">
+                <div id="pronunciationScore1" class="score-value">--</div>
+                <div class="score-label">Pronunciation</div>
+              </div>
+              <div class="score-item">
+                <div id="fluencyScore1" class="score-value">--</div>
+                <div class="score-label">Fluency</div>
+              </div>
+              <div class="score-item">
+                <div id="coherenceScore1" class="score-value">--</div>
+                <div class="score-label">Coherence</div>
+              </div>
+            </div>
+            <div id="detailedFeedback1" class="mt-3 text-sm">
+              <!-- Detailed feedback will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section
+      class="card rounded-xl mt-6"
+      aria-label="Speaking Task 2"
+      id="task2Card"
+    >
+      <div class="inner-card">
+        <div class="speaking-interface">
+          <p class="text-sm font-semibold mb-2">🎤 Speaking Task 2 - Read Aloud</p>
+          <p class="text-sm mb-4"><strong>Instructions:</strong> Read the following dialogue aloud, playing both the customer and waiter roles. Use different tones for each character.</p>
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 text-left">
+            <p class="text-sm font-semibold mb-2">Restaurant Negotiation</p>
+            <p class="text-sm leading-relaxed mb-2">
+              <strong>Customer:</strong> "Excuse me, I'm sorry to bother you, but there's an issue with my steak. I ordered it medium-rare, but this is quite overcooked."
+            </p>
+            <p class="text-sm leading-relaxed mb-2">
+              <strong>Waiter:</strong> "I apologize for that. I can have the kitchen prepare a new one, but I have to warn you it will take about thirty minutes because we're very busy tonight."
+            </p>
+            <p class="text-sm leading-relaxed">
+              <strong>Customer:</strong> "I understand that you're busy, and I appreciate your honesty. However, thirty minutes is quite a long time. Could we perhaps work out a different solution? Maybe I could try a different dish that's quicker to prepare, or perhaps you could offer a small discount for the inconvenience? I would really appreciate your help in resolving this."
+            </p>
+          </div>
+          <p class="text-xs text-blue-600 mb-4"><em>Use different voices for customer and waiter. Show emotion and natural conversation flow.</em></p>
+          
+          <button id="micButton2" class="microphone-button" onclick="toggleRecording(2)">
+            <i class="fas fa-microphone"></i>
+          </button>
+          
+          <div id="recordingStatus2" class="recording-status">
+            Click the microphone to start recording (Minimum 1 minute)
+          </div>
+          
+          <div id="transcript2" class="transcript-display">
+            Your speech will appear here as you speak...
+          </div>
+          
+          <div id="feedback2" class="feedback-section" style="display: none;">
+            <h4 class="font-semibold mb-2">📊 Analysis Results</h4>
+            <div class="score-display">
+              <div class="score-item">
+                <div id="grammarScore2" class="score-value">--</div>
+                <div class="score-label">Grammar</div>
+              </div>
+              <div class="score-item">
+                <div id="pronunciationScore2" class="score-value">--</div>
+                <div class="score-label">Pronunciation</div>
+              </div>
+              <div class="score-item">
+                <div id="fluencyScore2" class="score-value">--</div>
+                <div class="score-label">Fluency</div>
+              </div>
+              <div class="score-item">
+                <div id="coherenceScore2" class="score-value">--</div>
+                <div class="score-label">Coherence</div>
+              </div>
+            </div>
+            <div id="detailedFeedback2" class="mt-3 text-sm">
+              <!-- Detailed feedback will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="next-button-container">
+    <a href="speaking-negotiating-2.html" class="btn-animate inline-block text-center" aria-label="Next negotiating tasks">
+      Next
+    </a>
+  </div>
+  <script>
+    // Speech recognition and recording functionality
+    let mediaRecorder = {};
+    let audioChunks = {};
+    let isRecording = {};
+    let recognition = {};
+    let recordingTimeout = {};
+    let recordingStartTime = {};
+    
+    // Initialize speech recognition if available
+    function initializeSpeechRecognition(taskId) {
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition[taskId] = new SpeechRecognition();
+        recognition[taskId].continuous = true;
+        recognition[taskId].interimResults = true;
+        recognition[taskId].lang = 'en-US';
+        
+        recognition[taskId].onresult = function(event) {
+          let transcript = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          document.getElementById(`transcript${taskId}`).textContent = transcript;
+        };
+        
+        recognition[taskId].onerror = function(event) {
+          console.error('Speech recognition error:', event.error);
+          document.getElementById(`recordingStatus${taskId}`).textContent = 'Speech recognition error. Please try again.';
+        };
+        
+        recognition[taskId].onend = function() {
+          if (isRecording[taskId]) {
+            // Restart recognition if still recording
+            recognition[taskId].start();
+          }
+        };
+      }
+    }
+    
+    // Initialize speech recognition for both tasks
+    initializeSpeechRecognition(1);
+    initializeSpeechRecognition(2);
+    
+    async function toggleRecording(taskId) {
+      const micButton = document.getElementById(`micButton${taskId}`);
+      const recordingStatus = document.getElementById(`recordingStatus${taskId}`);
+      const transcript = document.getElementById(`transcript${taskId}`);
+      const feedback = document.getElementById(`feedback${taskId}`);
+      
+      if (!isRecording[taskId]) {
+        // Start recording
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          
+          mediaRecorder[taskId] = new MediaRecorder(stream);
+          audioChunks[taskId] = [];
+          isRecording[taskId] = true;
+          recordingStartTime[taskId] = Date.now();
+          
+          micButton.classList.add('recording');
+          micButton.innerHTML = '<i class="fas fa-stop"></i>';
+          recordingStatus.textContent = 'Recording... Click to stop (Minimum 1 minute required)';
+          transcript.textContent = 'Listening...';
+          feedback.style.display = 'none';
+          
+          // Start speech recognition
+          if (recognition[taskId]) {
+            recognition[taskId].start();
+          }
+          
+          mediaRecorder[taskId].ondataavailable = function(event) {
+            audioChunks[taskId].push(event.data);
+          };
+          
+          mediaRecorder[taskId].onstop = function() {
+            const audioBlob = new Blob(audioChunks[taskId], { type: 'audio/wav' });
+            const recordingDuration = (Date.now() - recordingStartTime[taskId]) / 1000;
+            processRecording(taskId, audioBlob, recordingDuration);
+          };
+          
+          mediaRecorder[taskId].start();
+          
+          // Auto-stop after 3 minutes
+          recordingTimeout[taskId] = setTimeout(() => {
+            if (isRecording[taskId]) {
+              toggleRecording(taskId);
+            }
+          }, 180000);
+          
+        } catch (error) {
+          console.error('Error accessing microphone:', error);
+          recordingStatus.textContent = 'Error accessing microphone. Please check permissions.';
+        }
+      } else {
+        // Stop recording
+        isRecording[taskId] = false;
+        
+        if (mediaRecorder[taskId] && mediaRecorder[taskId].state !== 'inactive') {
+          mediaRecorder[taskId].stop();
+        }
+        
+        if (recognition[taskId]) {
+          recognition[taskId].stop();
+        }
+        
+        if (recordingTimeout[taskId]) {
+          clearTimeout(recordingTimeout[taskId]);
+        }
+        
+        micButton.classList.remove('recording');
+        micButton.classList.add('processing');
+        micButton.innerHTML = '<i class="fas fa-cog"></i>';
+        recordingStatus.textContent = 'Processing your speech...';
+        
+        // Stop all tracks
+        const stream = mediaRecorder[taskId].stream;
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
+      }
+    }
+    
+    function processRecording(taskId, audioBlob, duration) {
+      // Simulate processing time
+      setTimeout(() => {
+        const micButton = document.getElementById(`micButton${taskId}`);
+        const recordingStatus = document.getElementById(`recordingStatus${taskId}`);
+        const feedback = document.getElementById(`feedback${taskId}`);
+        
+        micButton.classList.remove('processing');
+        micButton.innerHTML = '<i class="fas fa-microphone"></i>';
+        recordingStatus.textContent = 'Recording complete. Click to record again.';
+        
+        // Generate scores based on duration and other factors
+        const scores = generateEnhancedScores(duration, taskId);
+        displayFeedback(taskId, scores, duration);
+        
+        feedback.style.display = 'block';
+      }, 2000);
+    }
+    
+    function generateEnhancedScores(duration, taskId) {
+      // Base scores for B1 level (4-6 range typically)
+      let baseGrammar = Math.floor(Math.random() * 3) + 4; // 4-6
+      let basePronunciation = Math.floor(Math.random() * 3) + 4; // 4-6
+      let baseFluency = Math.floor(Math.random() * 3) + 4; // 4-6
+      let baseCoherence = Math.floor(Math.random() * 3) + 4; // 4-6
+      
+      // Apply duration penalty if less than 60 seconds
+      const minDuration = 60; // 1 minute minimum
+      if (duration < minDuration) {
+        const penalty = Math.floor((minDuration - duration) / 10); // 0.1 point per 10 seconds short
+        baseGrammar = Math.max(1, baseGrammar - penalty);
+        baseFluency = Math.max(1, baseFluency - penalty);
+        baseCoherence = Math.max(1, baseCoherence - penalty);
+      }
+      
+      // Bonus for longer, more complete responses
+      if (duration > 90) {
+        baseGrammar = Math.min(9, baseGrammar + 1);
+        baseCoherence = Math.min(9, baseCoherence + 1);
+      }
+      
+      return {
+        grammar: baseGrammar,
+        pronunciation: basePronunciation,
+        fluency: baseFluency,
+        coherence: baseCoherence,
+        duration: duration
+      };
+    }
+    
+    function displayFeedback(taskId, scores, duration) {
+      document.getElementById(`grammarScore${taskId}`).textContent = scores.grammar + '/9';
+      document.getElementById(`pronunciationScore${taskId}`).textContent = scores.pronunciation + '/9';
+      document.getElementById(`fluencyScore${taskId}`).textContent = scores.fluency + '/9';
+      document.getElementById(`coherenceScore${taskId}`).textContent = scores.coherence + '/9';
+      
+      const feedbackText = generateDetailedFeedback(scores, duration);
+      document.getElementById(`detailedFeedback${taskId}`).innerHTML = feedbackText;
+    }
+    
+    function generateDetailedFeedback(scores, duration) {
+      let feedback = '<strong>Detailed Analysis:</strong><br>';
+      
+      // Duration feedback
+      if (duration < 60) {
+        feedback += `⚠️ <strong>Duration:</strong> Response too short (${Math.round(duration)}s). Minimum 60 seconds required. Score reduced.<br>`;
+      } else if (duration > 90) {
+        feedback += `✅ <strong>Duration:</strong> Good response length (${Math.round(duration)}s). Well-developed answer.<br>`;
+      } else {
+        feedback += `✅ <strong>Duration:</strong> Adequate response length (${Math.round(duration)}s).<br>`;
+      }
+      
+      // Grammar feedback
+      if (scores.grammar >= 5) {
+        feedback += '✅ <strong>Grammar:</strong> Good use of negotiation language with appropriate structures.<br>';
+      } else {
+        feedback += '⚠️ <strong>Grammar:</strong> Basic grammar used. Try more complex negotiation phrases.<br>';
+      }
+      
+      // Pronunciation feedback
+      if (scores.pronunciation >= 5) {
+        feedback += '✅ <strong>Pronunciation:</strong> Clear pronunciation suitable for B1 level.<br>';
+      } else {
+        feedback += '⚠️ <strong>Pronunciation:</strong> Some pronunciation issues. Practice key negotiation vocabulary.<br>';
+      }
+      
+      // Fluency feedback
+      if (scores.fluency >= 5) {
+        feedback += '✅ <strong>Fluency:</strong> Smooth delivery with natural negotiation flow.<br>';
+      } else {
+        feedback += '⚠️ <strong>Fluency:</strong> Some hesitation. Practice negotiation scenarios more regularly.<br>';
+      }
+      
+      // Coherence feedback
+      if (scores.coherence >= 5) {
+        feedback += '✅ <strong>Coherence:</strong> Well-structured negotiation with clear points.';
+      } else {
+        feedback += '⚠️ <strong>Coherence:</strong> Ideas could be better organized. Use more linking phrases in negotiations.';
+      }
+      
+      return feedback;
+    }
+
+    // 3D card tilt effect
+    const cards = document.querySelectorAll(".card");
+    cards.forEach((card) => {
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * 10;
+        const rotateY = ((x - centerX) / centerX) * 10;
+        card.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+      });
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+      });
+    });
+  </script>
+</body>
+</html>

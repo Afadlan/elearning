@@ -1,0 +1,191 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   ReallyEnglish Placement Test
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+      font-family: "Roboto", sans-serif;
+      perspective: 1000px;
+    }
+    /* 3D Card container */
+    .card {
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      will-change: transform;
+      transform-style: preserve-3d;
+      border-radius: 1rem;
+      cursor: grab;
+      background: white;
+      box-shadow: 0 8px 15px rgba(59, 130, 246, 0.1);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .card:active {
+      cursor: grabbing;
+    }
+    .card:hover {
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+    }
+    /* Button 3D style */
+    .btn-animate {
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+      z-index: 10;
+      border-radius: 0.375rem;
+      box-shadow: 0 6px 0 #1e40af;
+      transform-style: preserve-3d;
+      transform-origin: center bottom;
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.875rem;
+      user-select: none;
+      cursor: pointer;
+    }
+    .btn-animate::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.5s ease;
+      z-index: 0;
+    }
+    .btn-animate:hover::before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .btn-animate:hover {
+      background-color: #2563eb; /* darker blue */
+      box-shadow: 0 12px 0 #1e40af;
+      transform: translateY(-4px) rotateX(10deg);
+      color: white;
+      z-index: 11;
+    }
+    .btn-animate:active {
+      box-shadow: 0 3px 0 #1e40af;
+      transform: translateY(-1px) rotateX(5deg);
+    }
+    /* Logo behind text container */
+    header {
+      position: relative;
+      z-index: 10;
+    }
+    header .bg-logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      border-radius: 9999px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      header .bg-logo {
+        width: 120px;
+        height: 120px;
+        opacity: 0.1;
+      }
+    }
+    @media (max-width: 480px) {
+      header .bg-logo {
+        width: 80px;
+        height: 80px;
+        opacity: 0.08;
+      }
+    }
+  </style>
+ </head>
+ <body class="bg-[#f0f7ff] min-h-screen flex flex-col">
+  <header class="flex flex-wrap items-center gap-3 px-6 sm:px-10 py-6 max-w-[90rem] mx-auto">
+   <img alt="ReallyEnglish logo with letters R and E in blue square" class="w-[60px] h-[60px] object-contain relative z-10" height="60" src="https://storage.googleapis.com/a1aa/image/d09cce8d-911a-405c-e6b3-63ef1c89ae3a.jpg" width="60"/>
+   <div class="relative z-10">
+    <h1 class="text-[28px] font-extrabold text-[#2563eb] leading-none">
+     ReallyEnglish
+    </h1>
+    <p class="italic text-[16px] font-normal text-black/80 -mt-1">
+     Now Everyone Can Speak English
+    </p>
+   </div>
+   <img alt="Large blue gradient circle shape behind header text" class="bg-logo" height="200" src="https://storage.googleapis.com/a1aa/image/7a536139-0f90-464f-5576-28fa91748278.jpg" width="200"/>
+  </header>
+  <main class="max-w-[90rem] mx-auto flex flex-col gap-10 px-6 sm:px-10 flex-grow">
+   <section class="bg-white card border-t-8 border-[#2563eb] p-6 sm:p-10 flex flex-col md:flex-row md:justify-between md:items-start gap-8 rounded-xl">
+    <div class="md:w-1/2 flex flex-col gap-6">
+     <h2 class="text-[#2563eb] font-extrabold text-2xl">
+      Kenapa harus Placement Test?
+     </h2>
+     <p class="text-black/90 text-base leading-relaxed">
+      Placement test atau tes penempatan ini wajib kamu ikutin sebelum join
+      kursus di ReallyEnglish. Karena Min-Go mau pastiin banget kamu nyaman
+      di kelas yang materi dan rata-rata kemampuannya sama kayak kamu, nggak
+      ketinggian dan nggak kerendahan.
+     </p>
+    </div>
+    <div class="md:w-1/2 flex flex-col gap-10">
+     <img alt="Illustration of a clipboard with an online test checklist with blue border and header" class="w-[200px] h-[220px] object-contain self-end mx-auto md:mx-0" height="220" src="https://storage.googleapis.com/a1aa/image/81f07740-8a14-4073-6d51-0a25985b7e69.jpg" width="200"/>
+    </div>
+   </section>
+   <section class="bg-white card p-6 sm:p-10 flex flex-col md:flex-row md:justify-between md:items-center gap-8 rounded-xl shadow-md">
+    <img alt="Illustration of a person sitting at a desk working on a laptop with plants around" class="w-full max-w-[300px] h-[220px] object-contain mx-auto md:mx-0" height="220" src="https://storage.googleapis.com/a1aa/image/226c4d8b-b0e9-4447-f636-77038d43dbea.jpg" width="300"/>
+    <div class="md:w-1/2 flex flex-col gap-4">
+     <h3 class="text-[#2563eb] font-extrabold text-xl">
+      Ketentuan
+     </h3>
+     <p class="text-black/90 text-sm leading-relaxed">
+      Biar dapetin hasil tes yang optimal, Min-Go saranin ikut tesnya tanpa
+      alat bantu apapun yaa, apalagi dibantuin doi?
+     </p>
+     <p class="text-black/90 text-sm leading-relaxed">
+      Please, jangan! xixixi
+      <span class="inline-block">
+       🤭
+      </span>
+     </p>
+     <p class="text-black/90 text-sm leading-relaxed">
+      Good luck, sobat Min-Go!!
+     </p>
+    </div>
+   </section>
+   <div class="flex justify-end">
+    <a href="page2.html" class="btn-animate inline-block text-center">
+     Selanjutnya
+    </a>
+   </div>
+  </main>
+  <script>
+   // 3D card tilt effect
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left; // x position within the element.
+        const y = e.clientY - rect.top;  // y position within the element.
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * 10; // max 10deg rotation
+        const rotateY = ((x - centerX) / centerX) * 10;
+        card.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+      });
+    });
+  </script>
+ </body>
+</html>
